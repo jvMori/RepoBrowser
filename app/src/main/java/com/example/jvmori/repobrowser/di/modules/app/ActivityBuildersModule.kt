@@ -1,6 +1,7 @@
 package com.example.jvmori.repobrowser.di.modules.app
 
 import com.example.jvmori.repobrowser.di.modules.main.MainFragmentsBuildersModule
+import com.example.jvmori.repobrowser.di.modules.main.MainViewModelsModule
 import com.example.jvmori.repobrowser.di.modules.main.ReposModule
 import com.example.jvmori.repobrowser.di.scopes.MainActivityScope
 import com.example.jvmori.repobrowser.ui.MainActivity
@@ -14,6 +15,7 @@ abstract class ActivityBuildersModule {
     @ContributesAndroidInjector(
         modules = [
             MainFragmentsBuildersModule::class,
+            MainViewModelsModule::class,
             ReposModule::class
         ]
     )
