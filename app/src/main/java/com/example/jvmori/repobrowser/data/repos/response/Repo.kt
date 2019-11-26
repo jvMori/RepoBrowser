@@ -5,49 +5,51 @@ import com.google.gson.annotations.SerializedName
 
 data class Repo(
     @SerializedName("private")
-    var `private`: Boolean?,
+    var `private`: Boolean,
     @SerializedName("created_at")
-    var createdAt: String?,
+    var createdAt: String,
     @SerializedName("default_branch")
-    var defaultBranch: String?,
+    var defaultBranch: String,
     @SerializedName("description")
-    var description: String?,
+    var description: String,
     @SerializedName("fork")
-    var fork: Boolean?,
+    var fork: Boolean,
     @SerializedName("forks_count")
-    var forksCount: Int?,
+    var forksCount: Int,
     @SerializedName("full_name")
-    var fullName: String?,
+    var fullName: String,
     @SerializedName("homepage")
-    var homepage: String?,
+    var homepage: String,
     @SerializedName("html_url")
-    var htmlUrl: String?,
+    var htmlUrl: String,
     @SerializedName("id")
-    var id: Int?,
+    var id: Int,
     @SerializedName("language")
-    var language: String?,
+    var language: String,
     @SerializedName("master_branch")
-    var masterBranch: String?,
+    var masterBranch: String,
     @SerializedName("name")
-    var name: String?,
+    var name: String,
     @SerializedName("node_id")
-    var nodeId: String?,
+    var nodeId: String,
     @SerializedName("open_issues_count")
-    var openIssuesCount: Int?,
+    var openIssuesCount: Int,
     @SerializedName("owner")
-    var owner: Owner?,
+    var owner: Owner,
     @SerializedName("pushed_at")
-    var pushedAt: String?,
+    var pushedAt: String,
     @SerializedName("score")
-    var score: Double?,
+    var score: Double,
     @SerializedName("size")
-    var size: Int?,
+    var size: Int,
     @SerializedName("stargazers_count")
-    var stargazersCount: Int?,
+    var stargazersCount: Int,
     @SerializedName("updated_at")
-    var updatedAt: String?,
+    var updatedAt: String,
     @SerializedName("url")
-    var url: String?,
+    var url: String,
     @SerializedName("watchers_count")
-    var watchersCount: Int?
+    var watchersCount: Int,
+    @SerializedName("has_wiki")
+    var has_wiki: Boolean
 )

@@ -5,9 +5,9 @@ import com.google.gson.annotations.SerializedName
 
 data class ReposResponse(
     @SerializedName("incomplete_results")
-    var incompleteResults: Boolean?,
+    var incompleteResults: Boolean,
     @SerializedName("items")
-    var repositories: List<Repo?>?,
+    var repositories: List<Repo>,
     @SerializedName("total_count")
-    var totalCount: Int?
+    var totalCount: Int
 )

@@ -5,19 +5,19 @@ import com.google.gson.annotations.SerializedName
 
 data class Owner(
     @SerializedName("avatar_url")
-    var avatarUrl: String?,
+    var avatarUrl: String,
     @SerializedName("gravatar_id")
-    var gravatarId: String?,
+    var gravatarId: String,
     @SerializedName("id")
-    var id: Int?,
+    var id: Int,
     @SerializedName("login")
-    var login: String?,
+    var login: String,
     @SerializedName("node_id")
-    var nodeId: String?,
+    var nodeId: String,
     @SerializedName("received_events_url")
-    var receivedEventsUrl: String?,
+    var receivedEventsUrl: String,
     @SerializedName("type")
-    var type: String?,
+    var type: String,
     @SerializedName("url")
-    var url: String?
+    var url: String
 )
