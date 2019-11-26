@@ -1,14 +1,13 @@
 package com.example.jvmori.repobrowser.ui.repos
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import com.example.jvmori.repobrowser.data.repos.ReposUI
 import com.example.jvmori.repobrowser.databinding.RepoItemBinding
 import com.example.jvmori.repobrowser.ui.BaseAdapter
 
 class ReposAdapter(
-     items: List<ReposUI>
+     items: List<ReposUI>?
 ) : BaseAdapter<ReposUI>(items) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder<ReposUI> {

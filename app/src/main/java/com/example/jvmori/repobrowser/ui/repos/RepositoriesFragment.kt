@@ -15,6 +15,7 @@ import com.example.jvmori.repobrowser.R
 import com.example.jvmori.repobrowser.data.base.Resource
 import com.example.jvmori.repobrowser.data.repos.ReposUI
 import dagger.android.support.DaggerFragment
+import kotlinx.android.synthetic.main.fragment_repositories.*
 import javax.inject.Inject
 
 // TODO: Rename parameter arguments, choose names that match
@@ -60,6 +61,9 @@ class RepositoriesFragment : DaggerFragment() {
     }
     private fun displayData(repos: List<ReposUI>?) {
         Log.i("REPO", repos.toString())
+        reposRv.apply {
+            adapter = ReposAdapter(repos)
+        }
     }
 
 }
