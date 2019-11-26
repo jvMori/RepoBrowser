@@ -2,6 +2,7 @@ package com.example.jvmori.repobrowser.di.component
 
 import android.app.Application
 import com.example.jvmori.repobrowser.application.BaseApplication
+import com.example.jvmori.repobrowser.di.modules.app.ActivityBuildersModule
 import com.example.jvmori.repobrowser.di.modules.app.NetworkModule
 import com.example.jvmori.repobrowser.di.scopes.ApplicationScope
 import dagger.BindsInstance
@@ -15,6 +16,7 @@ import dagger.android.support.AndroidSupportInjectionModule
     modules = [
         AndroidSupportInjectionModule::class,
         AndroidInjectionModule::class,
+        ActivityBuildersModule::class,
         NetworkModule::class
     ]
 )
