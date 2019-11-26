@@ -1,7 +1,8 @@
-package com.example.jvmori.repobrowser.di
+package com.example.jvmori.repobrowser.di.component
 
 import android.app.Application
 import com.example.jvmori.repobrowser.application.BaseApplication
+import com.example.jvmori.repobrowser.di.modules.app.NetworkModule
 import com.example.jvmori.repobrowser.di.scopes.ApplicationScope
 import dagger.BindsInstance
 import dagger.Component
@@ -13,7 +14,9 @@ import dagger.android.support.AndroidSupportInjectionModule
 @Component(
     modules = [
         AndroidSupportInjectionModule::class,
-        AndroidInjectionModule::class]
+        AndroidInjectionModule::class,
+        NetworkModule::class
+    ]
 )
 interface AppComponent : AndroidInjector<BaseApplication> {
 

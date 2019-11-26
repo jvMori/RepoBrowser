@@ -1,6 +1,6 @@
 package com.example.jvmori.repobrowser.application
 
-import com.example.jvmori.repobrowser.di.DaggerAppComponent
+import com.example.jvmori.repobrowser.di.component.DaggerAppComponent
 import dagger.android.AndroidInjector
 import dagger.android.support.DaggerApplication
 
