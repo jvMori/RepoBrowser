@@ -11,6 +11,7 @@
 
         <androidx.cardview.widget.CardView
                 android:layout_width="0dp"
+                app:cardBackgroundColor="@{repo.hasWiki ? @color/colorAccent : @color/colorPrimary}"
                 style="@style/DarkCardView"
                 android:layout_height="wrap_content" app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toStartOf="parent" app:layout_constraintEnd_toEndOf="parent"
