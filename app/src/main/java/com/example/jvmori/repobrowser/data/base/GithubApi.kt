@@ -1,6 +1,6 @@
 package com.example.jvmori.repobrowser.data.base
 
-import com.example.jvmori.repobrowser.data.repos.response.RepositoriesResponse
+import com.example.jvmori.repobrowser.data.repos.response.ReposResponse
 import io.reactivex.Observable
 import retrofit2.http.GET
 import retrofit2.http.Query
@@ -8,5 +8,5 @@ import retrofit2.http.Query
 interface GithubApi {
 
     @GET("search/repositories")
-    fun fetchRepos(@Query("q") query : String) : Observable<RepositoriesResponse>
+    fun fetchRepos(@Query("q") query : String) : Observable<ReposResponse>
 }

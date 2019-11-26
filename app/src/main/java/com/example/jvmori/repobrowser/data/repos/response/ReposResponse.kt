@@ -3,7 +3,7 @@ package com.example.jvmori.repobrowser.data.repos.response
 
 import com.google.gson.annotations.SerializedName
 
-data class RepositoriesResponse(
+data class ReposResponse(
     @SerializedName("incomplete_results")
     var incompleteResults: Boolean?,
     @SerializedName("items")
