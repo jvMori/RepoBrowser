@@ -3,7 +3,7 @@ package com.example.jvmori.repobrowser.ui.repos
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.jvmori.repobrowser.data.base.Resource
+import com.example.jvmori.repobrowser.data.base.network.Resource
 import com.example.jvmori.repobrowser.data.repos.ReposRepository
 import com.example.jvmori.repobrowser.data.repos.ReposUI
 import com.example.jvmori.repobrowser.data.repos.response.Repo

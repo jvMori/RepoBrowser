@@ -1,4 +1,4 @@
-package com.example.jvmori.repobrowser.data.base
+package com.example.jvmori.repobrowser.data.base.network
 
 import androidx.annotation.NonNull
 import androidx.annotation.Nullable
@@ -18,15 +18,27 @@ class Resource<T>(
     companion object {
 
         fun <T> success(@Nullable data: T): Resource<T> {
-            return Resource(Status.SUCCESS, data, null)
+            return Resource(
+                Status.SUCCESS,
+                data,
+                null
+            )
         }
 
         fun <T> error(@NonNull msg: String, @Nullable data: T?): Resource<T> {
-            return Resource(Status.ERROR, data, msg)
+            return Resource(
+                Status.ERROR,
+                data,
+                msg
+            )
         }
 
         fun <T> loading(@Nullable data: T?): Resource<T> {
-            return Resource(Status.LOADING, data, null)
+            return Resource(
+                Status.LOADING,
+                data,
+                null
+            )
         }
     }
 }

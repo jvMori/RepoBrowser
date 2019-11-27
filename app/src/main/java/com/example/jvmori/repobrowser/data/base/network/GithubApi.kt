@@ -1,4 +1,4 @@
-package com.example.jvmori.repobrowser.data.base
+package com.example.jvmori.repobrowser.data.base.network
 
 import com.example.jvmori.repobrowser.data.repos.response.ReposResponse
 import io.reactivex.Observable

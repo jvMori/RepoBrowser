@@ -1,6 +1,6 @@
 package com.example.jvmori.repobrowser.di.modules.main
 
-import com.example.jvmori.repobrowser.data.base.GithubApi
+import com.example.jvmori.repobrowser.data.base.network.GithubApi
 import com.example.jvmori.repobrowser.data.repos.ReposNetworkDataSource
 import com.example.jvmori.repobrowser.data.repos.ReposNetworkDataSourceImpl
 import com.example.jvmori.repobrowser.data.repos.ReposRepository

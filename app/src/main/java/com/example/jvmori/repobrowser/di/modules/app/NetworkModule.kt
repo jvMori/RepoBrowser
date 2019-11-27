@@ -1,6 +1,6 @@
 package com.example.jvmori.repobrowser.di.modules.app
 
-import com.example.jvmori.repobrowser.data.base.GithubApi
+import com.example.jvmori.repobrowser.data.base.network.GithubApi
 import com.example.jvmori.repobrowser.di.scopes.ApplicationScope
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import dagger.Module
