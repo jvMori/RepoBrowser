@@ -45,6 +45,7 @@ class RepositoriesFragment :
     }
 
     override fun onClose(): Boolean {
+        viewModel.fetchTetrisRepos()
         return false
     }
 
@@ -85,6 +86,7 @@ class RepositoriesFragment :
     private fun observeData() {
         viewModel = ViewModelProviders.of(this, factory)[RepositoriesViewModel::class.java]
         viewModel.configurePublishSubject()
+        viewModel.fetchTetrisRepos()
         observeResults()
     }
 

@@ -51,6 +51,20 @@ class RepositoriesViewModel @Inject constructor(
            .onNext(query)
    }
 
+    fun fetchTetrisRepos(){
+        _repos.value = Resource.loading(null)
+        disposable.add(
+            getRepos("tetris")
+                .subscribe(
+                    { result ->
+                        _repos.value = Resource.success(result)
+                    }, {
+                        _repos.value = Resource.error(it.message ?: "", null)
+                    }
+                )
+        )
+    }
+
     private fun getRepos(query: String): Observable<List<ReposUI>> {
         return repository.fetchRepos(query)
             .subscribeOn(Schedulers.io())
