@@ -7,6 +7,7 @@ import com.example.jvmori.repobrowser.data.base.network.Resource
 import com.example.jvmori.repobrowser.data.repos.ReposRepository
 import com.example.jvmori.repobrowser.data.repos.ReposUI
 import com.example.jvmori.repobrowser.data.repos.response.Repo
+import io.reactivex.Flowable
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -27,7 +28,7 @@ class RepositoriesViewModel @Inject constructor(
         disposable.add(
             repository.fetchRepos(query)
                 .flatMap {
-                    return@flatMap Observable.just(
+                    return@flatMap Flowable.just(
                         dataMapper(it.repositories)
                     )
                 }
