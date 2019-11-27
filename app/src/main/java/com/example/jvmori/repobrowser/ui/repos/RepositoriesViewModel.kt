@@ -51,26 +51,6 @@ class RepositoriesViewModel @Inject constructor(
            .onNext(query)
    }
 
-    fun onQueryTextSubmit(query: String){
-        publishSubject.onComplete()
-    }
-
-    fun fetchRepos(query: String) {
-        _repos.value = Resource.loading(null)
-        disposable.add(
-            getRepos(query)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.io())
-                .subscribe(
-                    { success ->
-                        _repos.value = Resource.success(success)
-                    }, {
-                        _repos.value = Resource.error(it.message ?: "", null)
-                    }
-                )
-        )
-    }
-
     private fun getRepos(query: String): Observable<List<ReposUI>> {
         return repository.fetchRepos(query)
             .subscribeOn(Schedulers.io())

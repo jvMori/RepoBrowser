@@ -53,7 +53,6 @@ class RepositoriesFragment : DaggerFragment() {
 
     private fun observeData() {
         viewModel = ViewModelProviders.of(this, factory)[RepositoriesViewModel::class.java]
-        // viewModel.fetchRepos("Tetris")
         viewModel.configurePublishSubject()
         observeSearchView()
         observeResults()
