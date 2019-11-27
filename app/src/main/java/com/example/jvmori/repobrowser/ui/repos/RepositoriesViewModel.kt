@@ -12,6 +12,8 @@ import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import io.reactivex.subjects.PublishSubject
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class RepositoriesViewModel @Inject constructor(
@@ -21,17 +23,42 @@ class RepositoriesViewModel @Inject constructor(
     private val _repos: MutableLiveData<Resource<List<ReposUI>>> = MutableLiveData()
     val repos: LiveData<Resource<List<ReposUI>>> = _repos
 
+    private val publishSubject = PublishSubject.create<String>()
     private val disposable = CompositeDisposable()
+
+    fun configurePublishSubject() {
+        disposable.add(
+            publishSubject
+                .debounce(300, TimeUnit.MILLISECONDS)
+                .distinctUntilChanged()
+                .filter{query -> query.isNotEmpty()}
+                .switchMap {
+                    _repos.postValue(Resource.loading(null))
+                    getRepos(it)
+                }
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({ result ->
+                    _repos.value = Resource.success(result)
+                }, {
+                    _repos.value = Resource.error(it.message ?: "", null)
+                } )
+        )
+    }
+
+   fun onQueryTextChange(query : String){
+       publishSubject
+           .onNext(query)
+   }
+
+    fun onQueryTextSubmit(query: String){
+        publishSubject.onComplete()
+    }
 
     fun fetchRepos(query: String) {
         _repos.value = Resource.loading(null)
         disposable.add(
-            repository.fetchRepos(query)
-                .flatMap {
-                    return@flatMap Flowable.just(
-                        dataMapper(it.repositories)
-                    )
-                }
+            getRepos(query)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
                 .subscribe(
@@ -42,6 +69,18 @@ class RepositoriesViewModel @Inject constructor(
                     }
                 )
         )
+    }
+
+    private fun getRepos(query: String): Observable<List<ReposUI>> {
+        return repository.fetchRepos(query)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .flatMap {
+                return@flatMap Flowable.just(
+                    dataMapper(it.repositories)
+                )
+            }
+            .toObservable()
     }
 
     private fun dataMapper(requestData: List<Repo>): List<ReposUI> {
