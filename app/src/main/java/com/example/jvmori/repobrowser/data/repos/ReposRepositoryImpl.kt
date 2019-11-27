@@ -39,7 +39,7 @@ class ReposRepositoryImpl @Inject constructor(
         Completable.fromAction {
             data.timestamp = System.currentTimeMillis()
             data.query = params
-            dao.insert(data)
+            dao.updateData(data)
         }.observeOn(AndroidSchedulers.mainThread())
             .subscribeOn(Schedulers.io())
             .doOnError { error -> onErrorOccur(error.message ?: "") }
