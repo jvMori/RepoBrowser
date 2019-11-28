@@ -10,6 +10,7 @@ import androidx.paging.PagedList
 import com.example.jvmori.repobrowser.data.repos.GithubDataSource
 import com.example.jvmori.repobrowser.data.repos.ReposNetworkDataSource
 import com.example.jvmori.repobrowser.data.repos.ReposUI
+import com.example.jvmori.repobrowser.data.repos.Status
 import io.reactivex.disposables.CompositeDisposable
 import javax.inject.Inject
 
@@ -19,8 +20,10 @@ class RepositoriesViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val disposable = CompositeDisposable()
+    private val _status : MutableLiveData<Status> = MutableLiveData()
+    val status : LiveData<Status> = _status
 
-    val config = PagedList.Config.Builder()
+    private val config = PagedList.Config.Builder()
         .setPageSize(10)
         .setEnablePlaceholders(false)
         .build()
@@ -34,7 +37,7 @@ class RepositoriesViewModel @Inject constructor(
     ): LivePagedListBuilder<Int, ReposUI> {
         val dataSourceFactory = object : DataSource.Factory<Int, ReposUI>() {
             override fun create(): DataSource<Int, ReposUI> {
-                return GithubDataSource(networkDataSource, query, disposable)
+                return GithubDataSource(networkDataSource, query, disposable, _status)
             }
         }
         return LivePagedListBuilder<Int, ReposUI>(dataSourceFactory, config)

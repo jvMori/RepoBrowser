@@ -11,7 +11,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import com.example.jvmori.repobrowser.R
-import com.example.jvmori.repobrowser.data.base.network.Resource
+import com.example.jvmori.repobrowser.data.repos.Status
 import com.example.jvmori.repobrowser.databinding.FragmentRepositoriesBinding
 import dagger.android.support.DaggerFragment
 import javax.inject.Inject
@@ -31,24 +31,6 @@ class RepositoriesFragment :
     SearchView.OnCloseListener {
 
     private lateinit var reposAdapter: ReposAdapter
-
-    override fun onQueryTextSubmit(query: String?): Boolean {
-        return false
-    }
-
-    override fun onQueryTextChange(newText: String?): Boolean {
-        val text = newText ?: ""
-        viewModel?.onQueryTextChange(text)
-        if (text.isEmpty())
-            initRecyclerView()
-        return true
-    }
-
-    override fun onClose(): Boolean {
-
-        return false
-    }
-
     @Inject
     lateinit var factory: ViewModelProvider.Factory
 
@@ -62,6 +44,10 @@ class RepositoriesFragment :
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
+        setupSearchViewInAppBar(inflater, menu)
+    }
+
+    private fun setupSearchViewInAppBar(inflater: MenuInflater, menu: Menu) {
         inflater.inflate(R.menu.menu, menu)
         val searchView = menu?.findItem(R.id.action_search)?.actionView as SearchView
         searchView.setOnQueryTextListener(this)
@@ -86,7 +72,20 @@ class RepositoriesFragment :
         viewModel.getSearchResults().observe(this, Observer {
             reposAdapter.submitList(it)
         })
+        viewModel.status.observe(this, Observer {
+            when (it) {
+                Status.ERROR -> error("Something went wrong!")
+            }
+        })
     }
+    private fun initRecyclerView() {
+        binding.loading.visibility = View.GONE
+        reposAdapter = ReposAdapter()
+        binding.reposRv.apply {
+            adapter = reposAdapter
+        }
+    }
+
     private fun displayTetrisRepos() {
         viewModel.fetchReposLiveData("tetris").observe(this, Observer {
             reposAdapter.submitList(it)
@@ -102,11 +101,20 @@ class RepositoriesFragment :
         Toast.makeText(this.requireContext(), errorMessage, Toast.LENGTH_LONG).show()
     }
 
-    private fun initRecyclerView() {
-        binding.loading.visibility = View.GONE
-        reposAdapter = ReposAdapter()
-        binding.reposRv.apply {
-            adapter = reposAdapter
-        }
+    override fun onQueryTextSubmit(query: String?): Boolean {
+        return false
     }
+
+    override fun onQueryTextChange(newText: String?): Boolean {
+        val text = newText ?: ""
+        viewModel?.onQueryTextChange(text)
+        if (text.isEmpty())
+            initRecyclerView()
+        return true
+    }
+
+    override fun onClose(): Boolean {
+        return false
+    }
+
 }
