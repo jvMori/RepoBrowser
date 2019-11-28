@@ -70,11 +70,10 @@ class RepositoriesViewModel @Inject constructor(
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .flatMap {
-                return@flatMap Flowable.just(
+                return@flatMap Observable.just(
                     dataMapper(it.repositories)
                 )
             }
-            .toObservable()
     }
 
     private fun dataMapper(requestData: List<Repo>): List<ReposUI> {
