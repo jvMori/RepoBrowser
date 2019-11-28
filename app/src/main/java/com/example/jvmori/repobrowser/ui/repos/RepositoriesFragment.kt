@@ -107,13 +107,14 @@ class RepositoriesFragment :
 
     override fun onQueryTextChange(newText: String?): Boolean {
         val text = newText ?: ""
-        viewModel?.onQueryTextChange(text)
+        viewModel?.onQueryTextChange(text, this)
         if (text.isEmpty())
             initRecyclerView()
         return true
     }
 
     override fun onClose(): Boolean {
+        displayTetrisRepos()
         return false
     }
 

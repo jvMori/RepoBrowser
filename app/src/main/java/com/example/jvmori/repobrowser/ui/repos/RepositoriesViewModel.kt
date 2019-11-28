@@ -1,9 +1,6 @@
 package com.example.jvmori.repobrowser.ui.repos
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Transformations
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.*
 import androidx.paging.DataSource
 import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
@@ -28,8 +25,9 @@ class RepositoriesViewModel @Inject constructor(
         .setEnablePlaceholders(false)
         .build()
 
-    fun fetchReposLiveData(query: String): LiveData<PagedList<ReposUI>> =
-        initializedPagedListBuilder(config, query).build()
+    fun fetchReposLiveData(query: String) =
+         initializedPagedListBuilder(config, query).build()
+
 
     private fun initializedPagedListBuilder(
         config: PagedList.Config,
@@ -50,9 +48,11 @@ class RepositoriesViewModel @Inject constructor(
                 return@switchMap fetchReposLiveData(input)
             }
     }
-    fun onQueryTextChange(query: String?) {
-        if (query != null && query.isNotEmpty())
+    fun onQueryTextChange(query: String?, lifecycleOwner: LifecycleOwner) {
+        if (query != null && query.isNotEmpty()){
+            filterTextAll.removeObservers(lifecycleOwner)
             filterTextAll.value = query
+        }
     }
 
     override fun onCleared() {

@@ -37,7 +37,7 @@ class GithubDataSource(
                     callback.onResult(mappedData, null, firstPage + 1)
                     status.postValue(Status.SUCCESS)
                 }, {
-                    error()
+                    error(it.message ?: "error")
                 }
             )
         )
@@ -58,7 +58,7 @@ class GithubDataSource(
                     callback.onResult(mappedData, key)
                     status.postValue(Status.SUCCESS)
                 }, {
-                    error()
+                    error(it.message ?: "error")
                 }
             )
         )
@@ -78,14 +78,14 @@ class GithubDataSource(
                     callback.onResult(mappedData, key)
                     status.postValue(Status.SUCCESS)
                 }, {
-                    error()
+                    error(it.message ?: "error")
                 }
             )
         )
     }
 
-    private fun error() {
-        Log.e(TAG, "Failed to fetch data!")
+    private fun error(msg : String) {
+        Log.e(TAG, msg)
         status.postValue(Status.ERROR)
     }
 }
