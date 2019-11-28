@@ -8,7 +8,7 @@ import javax.inject.Inject
 class LocalCacheImpl @Inject constructor(
     var dao: ReposDao
 ) : LocalCache {
-    override fun insert(repos: List<Repo>) {
+    override fun insert(repos: List<Repo>, onSuccess : () -> Unit) {
         Completable.fromAction {
             dao.insert(repos)
         }.subscribe()
