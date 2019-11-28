@@ -45,7 +45,7 @@ class RepositoriesFragment :
     }
 
     override fun onClose(): Boolean {
-        viewModel.fetchTetrisRepos()
+
         return false
     }
 
@@ -83,28 +83,15 @@ class RepositoriesFragment :
         viewModel = ViewModelProviders.of(this, factory)[RepositoriesViewModel::class.java]
         initRecyclerView()
         displayTetrisRepos()
+        viewModel.getSearchResults().observe(this, Observer {
+            reposAdapter.submitList(it)
+        })
     }
-
     private fun displayTetrisRepos() {
         viewModel.fetchReposLiveData("tetris").observe(this, Observer {
             reposAdapter.submitList(it)
         })
-        //viewModel.configurePublishSubject()
-        //viewModel.fetchTetrisRepos()
-        //observeResults()
     }
-
-    private fun observeResults() {
-        viewModel.repos.observe(this, Observer
-        {
-            when (it.status) {
-                Resource.Status.LOADING -> loading()
-               // Resource.Status.SUCCESS -> initRecyclerView(it.data)
-                Resource.Status.ERROR -> error(it.message)
-            }
-        })
-    }
-
 
     private fun loading() {
         binding.loading.visibility = View.VISIBLE
