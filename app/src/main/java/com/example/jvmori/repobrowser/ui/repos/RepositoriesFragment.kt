@@ -12,10 +12,8 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import com.example.jvmori.repobrowser.R
 import com.example.jvmori.repobrowser.data.base.network.Resource
-import com.example.jvmori.repobrowser.data.repos.ReposUI
 import com.example.jvmori.repobrowser.databinding.FragmentRepositoriesBinding
 import dagger.android.support.DaggerFragment
-import kotlinx.android.synthetic.main.fragment_repositories.*
 import javax.inject.Inject
 
 // TODO: Rename parameter arguments, choose names that match
@@ -32,6 +30,8 @@ class RepositoriesFragment :
     SearchView.OnQueryTextListener,
     SearchView.OnCloseListener {
 
+    private lateinit var reposAdapter: ReposAdapter
+
     override fun onQueryTextSubmit(query: String?): Boolean {
         return false
     }
@@ -40,7 +40,7 @@ class RepositoriesFragment :
         val text = newText ?: ""
         viewModel?.onQueryTextChange(text)
         if (text.isEmpty())
-            displayData(mutableListOf())
+            initRecyclerView()
         return true
     }
 
@@ -80,14 +80,18 @@ class RepositoriesFragment :
 
     override fun onStart() {
         super.onStart()
-        observeData()
+        viewModel = ViewModelProviders.of(this, factory)[RepositoriesViewModel::class.java]
+        initRecyclerView()
+        displayTetrisRepos()
     }
 
-    private fun observeData() {
-        viewModel = ViewModelProviders.of(this, factory)[RepositoriesViewModel::class.java]
-        viewModel.configurePublishSubject()
-        viewModel.fetchTetrisRepos()
-        observeResults()
+    private fun displayTetrisRepos() {
+        viewModel.fetchReposLiveData("tetris").observe(this, Observer {
+            reposAdapter.submitList(it)
+        })
+        //viewModel.configurePublishSubject()
+        //viewModel.fetchTetrisRepos()
+        //observeResults()
     }
 
     private fun observeResults() {
@@ -95,7 +99,7 @@ class RepositoriesFragment :
         {
             when (it.status) {
                 Resource.Status.LOADING -> loading()
-                Resource.Status.SUCCESS -> displayData(it.data)
+               // Resource.Status.SUCCESS -> initRecyclerView(it.data)
                 Resource.Status.ERROR -> error(it.message)
             }
         })
@@ -111,10 +115,11 @@ class RepositoriesFragment :
         Toast.makeText(this.requireContext(), errorMessage, Toast.LENGTH_LONG).show()
     }
 
-    private fun displayData(repos: List<ReposUI>?) {
+    private fun initRecyclerView() {
         binding.loading.visibility = View.GONE
+        reposAdapter = ReposAdapter()
         binding.reposRv.apply {
-            adapter = ReposAdapter(repos)
+            adapter = reposAdapter
         }
     }
 }

@@ -2,8 +2,14 @@ package com.example.jvmori.repobrowser.ui.repos
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
+import androidx.paging.DataSource
+import androidx.paging.LivePagedListBuilder
+import androidx.paging.PagedList
 import com.example.jvmori.repobrowser.data.base.network.Resource
+import com.example.jvmori.repobrowser.data.repos.GithubDataSource
+import com.example.jvmori.repobrowser.data.repos.ReposNetworkDataSource
 import com.example.jvmori.repobrowser.data.repos.ReposRepository
 import com.example.jvmori.repobrowser.data.repos.ReposUI
 import com.example.jvmori.repobrowser.data.repos.response.Repo
@@ -17,7 +23,8 @@ import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class RepositoriesViewModel @Inject constructor(
-    private val repository: ReposRepository
+    private val repository: ReposRepository,
+    private val networkDataSource: ReposNetworkDataSource
 ) : ViewModel() {
 
     private val _repos: MutableLiveData<Resource<List<ReposUI>>> = MutableLiveData()
@@ -25,6 +32,22 @@ class RepositoriesViewModel @Inject constructor(
 
     private val publishSubject = PublishSubject.create<String>()
     private val disposable = CompositeDisposable()
+
+    private val config = PagedList.Config.Builder()
+        .setPageSize(10)
+        .setEnablePlaceholders(false)
+        .build()
+
+    fun fetchReposLiveData(query: String) : LiveData<PagedList<ReposUI>> = initializedPagedListBuilder(config, query).build()
+
+    private fun initializedPagedListBuilder(config: PagedList.Config, query: String) :  LivePagedListBuilder<Int, ReposUI> {
+        val dataSourceFactory = object : DataSource.Factory<Int, ReposUI>() {
+            override fun create(): DataSource<Int, ReposUI> {
+                return GithubDataSource(networkDataSource, query, disposable)
+            }
+        }
+        return LivePagedListBuilder<Int, ReposUI>(dataSourceFactory, config)
+    }
 
     fun configurePublishSubject() {
         disposable.add(
