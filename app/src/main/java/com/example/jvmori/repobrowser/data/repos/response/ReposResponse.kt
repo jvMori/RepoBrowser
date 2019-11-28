@@ -2,7 +2,6 @@ package com.example.jvmori.repobrowser.data.repos.response
 
 
 import androidx.room.ColumnInfo
-import androidx.room.Entity
 import com.google.gson.annotations.SerializedName
 
 data class ReposResponse(

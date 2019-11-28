@@ -9,7 +9,7 @@ import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
 class LocalCacheImpl @Inject constructor(
-    var dao: ReposDao
+    private var dao: ReposDao
 ) : LocalCache {
     override fun insert(repos: List<Repo>, onSuccess: () -> Unit) {
         Completable.fromAction {

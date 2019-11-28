@@ -1,10 +1,9 @@
-package com.example.jvmori.repobrowser.data.base
+package com.example.jvmori.repobrowser.data.repos
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.paging.PagedList
 import com.example.jvmori.repobrowser.data.base.local.LocalCache
-import com.example.jvmori.repobrowser.data.repos.ReposNetworkDataSource
 import com.example.jvmori.repobrowser.data.repos.response.Repo
 import com.example.jvmori.repobrowser.data.repos.response.ReposResponse
 import retrofit2.Call
@@ -43,7 +42,8 @@ class BoundaryCondition(
         if (isRequestInProgress) return
 
         isRequestInProgress = true
-        networkDataSource.fetchRepos(query, NETWORK_PAGE_SIZE, lastRequestedPage)
+        networkDataSource.fetchRepos(query,
+            NETWORK_PAGE_SIZE, lastRequestedPage)
             .enqueue(object : Callback<ReposResponse> {
 
                 override fun onFailure(call: Call<ReposResponse>, t: Throwable) {

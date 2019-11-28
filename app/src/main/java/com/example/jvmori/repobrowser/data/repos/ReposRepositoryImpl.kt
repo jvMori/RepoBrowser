@@ -1,11 +1,8 @@
 package com.example.jvmori.repobrowser.data.repos
 
 import androidx.paging.LivePagedListBuilder
-import com.example.jvmori.repobrowser.data.base.BoundaryCondition
 import com.example.jvmori.repobrowser.data.base.local.LocalCache
 import com.example.jvmori.repobrowser.utils.DATABASE_PAGE_SIZE
-import com.example.jvmori.repobrowser.utils.dataMapper
-import io.reactivex.disposables.CompositeDisposable
 import javax.inject.Inject
 
 class ReposRepositoryImpl @Inject constructor(
@@ -17,7 +14,11 @@ class ReposRepositoryImpl @Inject constructor(
     ): RepoResult {
         val dataSourceFactory = localCache.getAllByName(query)
 
-        val boundaryCallback = BoundaryCondition(query, networkDataSource, localCache)
+        val boundaryCallback = BoundaryCondition(
+            query,
+            networkDataSource,
+            localCache
+        )
         val networkErrors = boundaryCallback.networkErrors
 
         val data = LivePagedListBuilder(dataSourceFactory, DATABASE_PAGE_SIZE)

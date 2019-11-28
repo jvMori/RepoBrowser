@@ -3,8 +3,6 @@ package com.example.jvmori.repobrowser.data.base.local
 import androidx.room.*
 import com.example.jvmori.repobrowser.data.repos.response.Repo
 import com.example.jvmori.repobrowser.data.repos.response.ReposResponse
-import io.reactivex.Maybe
-import javax.sql.DataSource
 
 @Dao
 interface ReposDao {

@@ -4,7 +4,6 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.example.jvmori.repobrowser.data.repos.response.Repo
-import com.example.jvmori.repobrowser.data.repos.response.ReposResponse
 import com.example.jvmori.repobrowser.utils.Converters
 
 @Database(entities = [Repo::class], version = 5, exportSchema = false)

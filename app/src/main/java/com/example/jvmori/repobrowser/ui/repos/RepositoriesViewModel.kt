@@ -34,7 +34,7 @@ class RepositoriesViewModel @Inject constructor(
     }
 
     fun displayTetrisRepos(){
-        queryLiveData.postValue("tetris")
+        queryLiveData.postValue("Tetris")
     }
 
 }

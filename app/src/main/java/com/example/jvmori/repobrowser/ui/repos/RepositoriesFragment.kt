@@ -48,7 +48,7 @@ class RepositoriesFragment :
 
     private fun setupSearchViewInAppBar(inflater: MenuInflater, menu: Menu) {
         inflater.inflate(R.menu.menu, menu)
-        val searchView = menu?.findItem(R.id.action_search)?.actionView as SearchView
+        val searchView = menu.findItem(R.id.action_search)?.actionView as SearchView
         searchView.setOnQueryTextListener(this)
         searchView.setOnCloseListener(this)
     }

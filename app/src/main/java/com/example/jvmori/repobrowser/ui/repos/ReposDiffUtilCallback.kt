@@ -1,7 +1,6 @@
 package com.example.jvmori.repobrowser.ui.repos
 
 import androidx.recyclerview.widget.DiffUtil
-import com.example.jvmori.repobrowser.data.repos.ReposUI
 import com.example.jvmori.repobrowser.data.repos.response.Repo
 
 class ReposDiffUtilCallback : DiffUtil.ItemCallback<Repo>() {
