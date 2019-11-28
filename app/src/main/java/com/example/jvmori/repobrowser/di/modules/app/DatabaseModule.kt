@@ -2,6 +2,8 @@ package com.example.jvmori.repobrowser.di.modules.app
 
 import android.app.Application
 import androidx.room.Room
+import com.example.jvmori.repobrowser.data.base.local.LocalCache
+import com.example.jvmori.repobrowser.data.base.local.LocalCacheImpl
 import com.example.jvmori.repobrowser.data.base.local.RepoBrowserDatabase
 import com.example.jvmori.repobrowser.data.base.local.ReposDao
 import com.example.jvmori.repobrowser.di.scopes.ApplicationScope
@@ -27,4 +29,8 @@ class DatabaseModule {
     fun provideReposDao(database : RepoBrowserDatabase) : ReposDao {
         return database.reposDao()
     }
+
+    @Provides
+    @ApplicationScope
+    fun provideLocalCache(dao: ReposDao) : LocalCache = LocalCacheImpl(dao)
 }
