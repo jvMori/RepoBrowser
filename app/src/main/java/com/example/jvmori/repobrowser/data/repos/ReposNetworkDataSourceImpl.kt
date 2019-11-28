@@ -14,8 +14,7 @@ class ReposNetworkDataSourceImpl
         query: String,
         loadSize: Int,
         page: Int
-    ):
-            Observable<ReposResponse> {
+    ): Observable<ReposResponse> {
         return githubApi.fetchRepos(query, loadSize, page)
     }
 }

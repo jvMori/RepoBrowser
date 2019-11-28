@@ -2,27 +2,19 @@ package com.example.jvmori.repobrowser.ui.repos
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.paging.PagedListAdapter
 import com.example.jvmori.repobrowser.data.repos.ReposUI
 import com.example.jvmori.repobrowser.databinding.RepoItemBinding
-import com.example.jvmori.repobrowser.ui.BaseAdapter
 
-class ReposAdapter(
-     items: List<ReposUI>?
-) : BaseAdapter<ReposUI>(items) {
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder<ReposUI> {
+class ReposAdapter : PagedListAdapter<ReposUI, ReposViewHolder>(ReposDiffUtilCallback()) {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ReposViewHolder {
         val inflater = LayoutInflater.from(parent.context)
         val binding = RepoItemBinding.inflate(inflater, parent, false)
-        return RepoViewHolder(binding)
+        return ReposViewHolder(binding)
     }
 
-    class RepoViewHolder(private val binding: RepoItemBinding) :
-        BaseAdapter.BaseViewHolder<ReposUI>(binding.root) {
-        override fun bindView(item: ReposUI?) {
-            with(binding) {
-                repo = item
-                executePendingBindings()
-            }
-        }
+    override fun onBindViewHolder(holder: ReposViewHolder, position: Int) {
+       holder.bindView(getItem(position))
     }
 }
+
