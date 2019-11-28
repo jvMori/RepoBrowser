@@ -17,7 +17,7 @@ class ReposRepositoryImpl @Inject constructor(
     ): RepoResult {
         val dataSourceFactory = localCache.getAllByName(query)
 
-        val boundaryCallback = BoundaryCondition(query, networkDataSource, localCache, CompositeDisposable())
+        val boundaryCallback = BoundaryCondition(query, networkDataSource, localCache)
         val networkErrors = boundaryCallback.networkErrors
 
         val data = LivePagedListBuilder(dataSourceFactory, DATABASE_PAGE_SIZE)

@@ -11,10 +11,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import com.example.jvmori.repobrowser.R
-import com.example.jvmori.repobrowser.data.repos.Status
 import com.example.jvmori.repobrowser.databinding.FragmentRepositoriesBinding
-import com.example.jvmori.repobrowser.utils.dataMapper
-import com.example.jvmori.repobrowser.utils.mapRepo
 import dagger.android.support.DaggerFragment
 import javax.inject.Inject
 

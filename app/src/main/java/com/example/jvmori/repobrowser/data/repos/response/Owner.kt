@@ -1,7 +1,6 @@
 package com.example.jvmori.repobrowser.data.repos.response
 
 
-import androidx.room.ColumnInfo
 import com.google.gson.annotations.SerializedName
 
 data class Owner(

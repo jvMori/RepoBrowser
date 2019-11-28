@@ -7,7 +7,7 @@ import com.example.jvmori.repobrowser.data.repos.response.Repo
 import com.example.jvmori.repobrowser.data.repos.response.ReposResponse
 import com.example.jvmori.repobrowser.utils.Converters
 
-@Database(entities = [Repo::class], version = 2, exportSchema = false)
+@Database(entities = [Repo::class], version = 5, exportSchema = false)
 @TypeConverters(Converters::class)
 abstract class RepoBrowserDatabase : RoomDatabase(){
     abstract fun reposDao() : ReposDao

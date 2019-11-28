@@ -20,8 +20,6 @@ data class Repo(
     var forksCount: Int,
     @SerializedName("full_name")
     var fullName: String,
-    @SerializedName("homepage")
-    var homepage: String,
     @SerializedName("html_url")
     var htmlUrl: String,
     @SerializedName("id")
@@ -29,8 +27,6 @@ data class Repo(
     var id: Int,
     @SerializedName("language")
     var language: String,
-    @SerializedName("master_branch")
-    var masterBranch: String,
     @SerializedName("name")
     @ColumnInfo(name = "repo_name")
     var name: String,
