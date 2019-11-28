@@ -54,12 +54,16 @@ class BoundaryCondition(
                     call: Call<ReposResponse>,
                     response: Response<ReposResponse>
                 ) {
-                    val data = response.body()?.repositories ?: listOf()
-                    cache.insert(data) {
-                        lastRequestedPage++
-                        isRequestInProgress = false
-                    }
+                   success(response)
                 }
             })
     }
+    private fun success(response : Response<ReposResponse>){
+        val data = response.body()?.repositories ?: listOf()
+        cache.insert(data) {
+            lastRequestedPage++
+            isRequestInProgress = false
+        }
+    }
+
 }
