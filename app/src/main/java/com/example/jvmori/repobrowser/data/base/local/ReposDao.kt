@@ -11,10 +11,10 @@ interface ReposDao {
     fun insert(data : ReposResponse)
 
     @Query("Select * from repos_table where repo_query like:repoQuery and repo_page like:repoPage ")
-    fun getRepos(repoQuery : String, repoPage : Int = 0) : Maybe<ReposResponse>
+    fun getRepos(repoQuery : String, repoPage : Int) : Maybe<ReposResponse>
 
     @Query("Delete from repos_table where repo_query like:repoQuery and repo_page like:repoPage ")
-    fun deleteRepos(repoQuery : String, repoPage : Int = 0)
+    fun deleteRepos(repoQuery : String, repoPage : Int)
 
     @Transaction
     fun updateData(data : ReposResponse){

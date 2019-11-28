@@ -7,10 +7,15 @@ import javax.inject.Inject
 
 class ReposNetworkDataSourceImpl
 @Inject constructor(
-    val githubApi: GithubApi
+    private val githubApi: GithubApi
 ) : ReposNetworkDataSource {
 
-    override fun fetchRepos(query: String): Observable<ReposResponse> {
-        return githubApi.fetchRepos(query)
+    override fun fetchRepos(
+        query: String,
+        loadSize: Int,
+        page: Int
+    ):
+            Observable<ReposResponse> {
+        return githubApi.fetchRepos(query, loadSize, page)
     }
 }
