@@ -1,11 +1,13 @@
 package com.example.jvmori.repobrowser.data.repos.response
 
 
+import androidx.room.ColumnInfo
+import androidx.room.Embedded
+import androidx.room.Entity
 import com.google.gson.annotations.SerializedName
 
+@Entity(tableName = "repos_table", primaryKeys = ["repo_id"])
 data class Repo(
-    @SerializedName("private")
-    var `private`: Boolean,
     @SerializedName("created_at")
     var createdAt: String,
     @SerializedName("default_branch")
@@ -23,18 +25,19 @@ data class Repo(
     @SerializedName("html_url")
     var htmlUrl: String,
     @SerializedName("id")
+    @ColumnInfo(name = "repo_id")
     var id: Int,
     @SerializedName("language")
     var language: String,
     @SerializedName("master_branch")
     var masterBranch: String,
     @SerializedName("name")
+    @ColumnInfo(name = "repo_name")
     var name: String,
-    @SerializedName("node_id")
-    var nodeId: String,
     @SerializedName("open_issues_count")
     var openIssuesCount: Int,
     @SerializedName("owner")
+    @Embedded(prefix = "owner_")
     var owner: Owner,
     @SerializedName("pushed_at")
     var pushedAt: String,

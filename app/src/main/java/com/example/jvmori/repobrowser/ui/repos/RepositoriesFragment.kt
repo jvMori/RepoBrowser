@@ -13,6 +13,8 @@ import androidx.lifecycle.ViewModelProviders
 import com.example.jvmori.repobrowser.R
 import com.example.jvmori.repobrowser.data.repos.Status
 import com.example.jvmori.repobrowser.databinding.FragmentRepositoriesBinding
+import com.example.jvmori.repobrowser.utils.dataMapper
+import com.example.jvmori.repobrowser.utils.mapRepo
 import dagger.android.support.DaggerFragment
 import javax.inject.Inject
 
@@ -68,14 +70,12 @@ class RepositoriesFragment :
         super.onStart()
         viewModel = ViewModelProviders.of(this, factory)[RepositoriesViewModel::class.java]
         initRecyclerView()
-        displayTetrisRepos()
-        viewModel.getSearchResults().observe(this, Observer {
+        viewModel.displayTetrisRepos()
+        viewModel.repos.observe(this, Observer {
             reposAdapter.submitList(it)
         })
-        viewModel.status.observe(this, Observer {
-            when (it) {
-                Status.ERROR -> error("Something went wrong!")
-            }
+        viewModel.networkErrors.observe(this, Observer {
+            error(it)
         })
     }
     private fun initRecyclerView() {
@@ -85,13 +85,6 @@ class RepositoriesFragment :
             adapter = reposAdapter
         }
     }
-
-    private fun displayTetrisRepos() {
-        viewModel.fetchReposLiveData("tetris").observe(this, Observer {
-            reposAdapter.submitList(it)
-        })
-    }
-
     private fun loading() {
         binding.loading.visibility = View.VISIBLE
     }
@@ -107,14 +100,12 @@ class RepositoriesFragment :
 
     override fun onQueryTextChange(newText: String?): Boolean {
         val text = newText ?: ""
-        viewModel?.onQueryTextChange(text, this)
-        if (text.isEmpty())
-            initRecyclerView()
+        viewModel.onQueryTextChange(text)
         return true
     }
 
     override fun onClose(): Boolean {
-        displayTetrisRepos()
+       viewModel.displayTetrisRepos()
         return false
     }
 

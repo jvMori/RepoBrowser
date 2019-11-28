@@ -1,20 +1,29 @@
 package com.example.jvmori.repobrowser.data.repos
 
-import com.example.jvmori.repobrowser.data.base.local.ReposDao
-import com.example.jvmori.repobrowser.data.repos.response.ReposResponse
-import io.reactivex.Observable
+import androidx.paging.LivePagedListBuilder
+import com.example.jvmori.repobrowser.data.base.BoundaryCondition
+import com.example.jvmori.repobrowser.data.base.local.LocalCache
+import com.example.jvmori.repobrowser.utils.DATABASE_PAGE_SIZE
+import com.example.jvmori.repobrowser.utils.dataMapper
+import io.reactivex.disposables.CompositeDisposable
 import javax.inject.Inject
 
 class ReposRepositoryImpl @Inject constructor(
-    private val networkDataSource: ReposNetworkDataSource
-
+    private val networkDataSource: ReposNetworkDataSource,
+    private val localCache: LocalCache
 ) : ReposRepository {
-
     override fun fetchRepos(
-        query: String,
-        loadSize: Int,
-        page: Int
-    ): Observable<ReposResponse> {
-        return networkDataSource.fetchRepos(query,loadSize,page)
+        query: String
+    ): RepoResult {
+        val dataSourceFactory = localCache.getAllByName(query)
+
+        val boundaryCallback = BoundaryCondition(query, networkDataSource, localCache, CompositeDisposable())
+        val networkErrors = boundaryCallback.networkErrors
+
+        val data = LivePagedListBuilder(dataSourceFactory, DATABASE_PAGE_SIZE)
+            .setBoundaryCallback(boundaryCallback)
+            .build()
+
+        return RepoResult(data, networkErrors)
     }
 }

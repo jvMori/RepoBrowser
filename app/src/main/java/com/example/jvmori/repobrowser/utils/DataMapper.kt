@@ -7,13 +7,18 @@ fun dataMapper(requestData: List<Repo>): List<ReposUI> {
     val array = mutableListOf<ReposUI>()
     requestData.forEach { repo ->
         array.add(
-            ReposUI(
-                repo.name,
-                repo.owner.login,
-                repo.size,
-                repo.has_wiki
-            )
+            mapRepo(repo)
         )
     }
     return array
+}
+
+fun mapRepo(repo: Repo?): ReposUI {
+    return ReposUI(
+        repo?.name,
+        repo?.owner?.login,
+        repo?.size,
+        repo?.has_wiki
+    )
+
 }

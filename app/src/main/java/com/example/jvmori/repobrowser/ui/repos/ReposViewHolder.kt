@@ -2,12 +2,14 @@ package com.example.jvmori.repobrowser.ui.repos
 
 import androidx.recyclerview.widget.RecyclerView
 import com.example.jvmori.repobrowser.data.repos.ReposUI
+import com.example.jvmori.repobrowser.data.repos.response.Repo
 import com.example.jvmori.repobrowser.databinding.RepoItemBinding
+import com.example.jvmori.repobrowser.utils.mapRepo
 
 class ReposViewHolder (private val binding : RepoItemBinding) : RecyclerView.ViewHolder(binding.root){
-    fun bindView(item: ReposUI?) {
+    fun bindView(item: Repo?) {
         with(binding) {
-            repo = item
+            repo = mapRepo(item)
             executePendingBindings()
         }
     }

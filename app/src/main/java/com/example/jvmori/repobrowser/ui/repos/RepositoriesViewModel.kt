@@ -1,63 +1,40 @@
 package com.example.jvmori.repobrowser.ui.repos
 
-import androidx.lifecycle.*
-import androidx.paging.DataSource
-import androidx.paging.LivePagedListBuilder
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Transformations
+import androidx.lifecycle.ViewModel
 import androidx.paging.PagedList
-import com.example.jvmori.repobrowser.data.repos.GithubDataSource
-import com.example.jvmori.repobrowser.data.repos.ReposNetworkDataSource
-import com.example.jvmori.repobrowser.data.repos.ReposUI
-import com.example.jvmori.repobrowser.data.repos.Status
-import io.reactivex.disposables.CompositeDisposable
+import com.example.jvmori.repobrowser.data.repos.RepoResult
+import com.example.jvmori.repobrowser.data.repos.ReposRepository
+import com.example.jvmori.repobrowser.data.repos.response.Repo
 import javax.inject.Inject
 
 
 class RepositoriesViewModel @Inject constructor(
-    private val networkDataSource: ReposNetworkDataSource
+    private val repository: ReposRepository
 ) : ViewModel() {
 
-    private val disposable = CompositeDisposable()
-    private val _status : MutableLiveData<Status> = MutableLiveData()
-    val status : LiveData<Status> = _status
-
-    private val config = PagedList.Config.Builder()
-        .setPageSize(10)
-        .setEnablePlaceholders(false)
-        .build()
-
-    fun fetchReposLiveData(query: String) =
-         initializedPagedListBuilder(config, query).build()
-
-
-    private fun initializedPagedListBuilder(
-        config: PagedList.Config,
-        query: String
-    ): LivePagedListBuilder<Int, ReposUI> {
-        val dataSourceFactory = object : DataSource.Factory<Int, ReposUI>() {
-            override fun create(): DataSource<Int, ReposUI> {
-                return GithubDataSource(networkDataSource, query, disposable, _status)
-            }
-        }
-        return LivePagedListBuilder<Int, ReposUI>(dataSourceFactory, config)
+    private val queryLiveData = MutableLiveData<String>()
+    private val repoResult: LiveData<RepoResult> = Transformations.map(queryLiveData) {
+        repository.fetchRepos(it)
     }
 
-    private val filterTextAll = MutableLiveData<String>()
-    fun getSearchResults() : LiveData<PagedList<ReposUI>> {
-        return Transformations
-            .switchMap(filterTextAll) { input ->
-                return@switchMap fetchReposLiveData(input)
-            }
+    val repos: LiveData<PagedList<Repo>> =
+        Transformations.switchMap(repoResult) { it.data }
+
+    val networkErrors: LiveData<String> = Transformations.switchMap(repoResult) {
+        it.networkErrors
     }
-    fun onQueryTextChange(query: String?, lifecycleOwner: LifecycleOwner) {
+
+    fun onQueryTextChange(query: String?) {
         if (query != null && query.isNotEmpty()){
-            filterTextAll.removeObservers(lifecycleOwner)
-            filterTextAll.value = query
+            queryLiveData.postValue(query)
         }
     }
 
-    override fun onCleared() {
-        super.onCleared()
-        disposable.clear()
+    fun displayTetrisRepos(){
+        queryLiveData.postValue("tetris")
     }
 
 }

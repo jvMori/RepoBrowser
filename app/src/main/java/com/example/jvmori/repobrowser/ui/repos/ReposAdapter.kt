@@ -3,10 +3,10 @@ package com.example.jvmori.repobrowser.ui.repos
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.paging.PagedListAdapter
-import com.example.jvmori.repobrowser.data.repos.ReposUI
+import com.example.jvmori.repobrowser.data.repos.response.Repo
 import com.example.jvmori.repobrowser.databinding.RepoItemBinding
 
-class ReposAdapter : PagedListAdapter<ReposUI, ReposViewHolder>(ReposDiffUtilCallback()) {
+class ReposAdapter : PagedListAdapter<Repo, ReposViewHolder>(ReposDiffUtilCallback()) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ReposViewHolder {
         val inflater = LayoutInflater.from(parent.context)
         val binding = RepoItemBinding.inflate(inflater, parent, false)

@@ -5,7 +5,6 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import com.google.gson.annotations.SerializedName
 
-@Entity(tableName = "repos_table", primaryKeys = ["repo_query", "repo_page"])
 data class ReposResponse(
     @ColumnInfo(name = "repo_query")
     var query : String,

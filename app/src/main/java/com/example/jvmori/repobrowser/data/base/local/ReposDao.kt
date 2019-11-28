@@ -12,15 +12,15 @@ interface ReposDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(posts: List<Repo>)
 
-    @Query("Select * from repos_table where repo_query like:repoQuery")
+    @Query("Select * from repos_table where repo_name like:repoQuery")
     fun getRepos(repoQuery : String) : androidx.paging.DataSource.Factory<Int, Repo>
 
-    @Query("Delete from repos_table where repo_query like:repoQuery and repo_page like:repoPage ")
-    fun deleteRepos(repoQuery : String, repoPage : Int)
+    @Query("Delete from repos_table where repo_name like:repoQuery")
+    fun deleteRepos(repoQuery : String)
 
     @Transaction
     fun updateData(data : ReposResponse){
-        deleteRepos(data.query, data.page)
+        deleteRepos(data.query)
         insert(data.repositories)
     }
 }
