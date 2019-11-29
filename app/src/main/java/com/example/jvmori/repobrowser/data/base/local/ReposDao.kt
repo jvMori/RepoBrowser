@@ -8,17 +8,12 @@ import com.example.jvmori.repobrowser.data.repos.response.ReposResponse
 interface ReposDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(posts: List<Repo>)
+    fun insert(posts: List<RepoEntity>)
 
-    @Query("Select * from repos_table where repo_name like:repoQuery")
-    fun getRepos(repoQuery : String) : androidx.paging.DataSource.Factory<Int, Repo>
+    @Query("Select * from repos_table where repo_query like:repoQuery")
+    fun getRepos(repoQuery : String) : androidx.paging.DataSource.Factory<Int, RepoEntity>
 
     @Query("Delete from repos_table where repo_name like:repoQuery")
     fun deleteRepos(repoQuery : String)
 
-    @Transaction
-    fun updateData(data : ReposResponse){
-        deleteRepos(data.query)
-        insert(data.repositories)
-    }
 }

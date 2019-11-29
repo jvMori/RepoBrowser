@@ -1,13 +1,16 @@
 package com.example.jvmori.repobrowser.data.repos
 
-import androidx.paging.LivePagedListBuilder
+import androidx.paging.PagedList
+import androidx.paging.RxPagedListBuilder
 import com.example.jvmori.repobrowser.data.base.local.LocalCache
 import com.example.jvmori.repobrowser.utils.DATABASE_PAGE_SIZE
+import io.reactivex.disposables.CompositeDisposable
 import javax.inject.Inject
 
 class ReposRepositoryImpl @Inject constructor(
     private val networkDataSource: ReposNetworkDataSource,
-    private val localCache: LocalCache
+    private val localCache: LocalCache,
+    private val disposable: CompositeDisposable
 ) : ReposRepository {
     override fun fetchRepos(
         query: String
@@ -17,13 +20,21 @@ class ReposRepositoryImpl @Inject constructor(
         val boundaryCallback = BoundaryCondition(
             query,
             networkDataSource,
-            localCache
+            localCache,
+            disposable
         )
+
         val networkErrors = boundaryCallback.networkErrors
 
-        val data = LivePagedListBuilder(dataSourceFactory, DATABASE_PAGE_SIZE)
-            .setBoundaryCallback(boundaryCallback)
+        val config = PagedList.Config.Builder()
+            .setPageSize(DATABASE_PAGE_SIZE)
+            .setPrefetchDistance(2 * DATABASE_PAGE_SIZE)
+            .setEnablePlaceholders(true)
             .build()
+
+        val data = RxPagedListBuilder(dataSourceFactory, config)
+            .setBoundaryCallback(boundaryCallback)
+            .buildObservable()
 
         return RepoResult(data, networkErrors)
     }

@@ -11,7 +11,7 @@ import javax.inject.Inject
 class LocalCacheImpl @Inject constructor(
     private var dao: ReposDao
 ) : LocalCache {
-    override fun insert(repos: List<Repo>, onSuccess: () -> Unit) {
+    override fun insert(repos: List<RepoEntity>, onSuccess: () -> Unit) {
         Completable.fromAction {
             dao.insert(repos)
         }.subscribeOn(Schedulers.io())
@@ -21,7 +21,7 @@ class LocalCacheImpl @Inject constructor(
             .subscribe()
     }
 
-    override fun getAllByName(query: String): DataSource.Factory<Int, Repo> {
+    override fun getAllByName(query: String): DataSource.Factory<Int, RepoEntity> {
         val queryClean = "%${query.replace(' ', '%')}%"
         return dao.getRepos(queryClean)
     }

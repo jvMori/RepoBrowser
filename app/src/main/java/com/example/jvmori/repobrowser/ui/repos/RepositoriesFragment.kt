@@ -10,7 +10,10 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
+import androidx.paging.PagedList
 import com.example.jvmori.repobrowser.R
+import com.example.jvmori.repobrowser.data.base.local.RepoEntity
+import com.example.jvmori.repobrowser.data.base.network.Resource
 import com.example.jvmori.repobrowser.databinding.FragmentRepositoriesBinding
 import dagger.android.support.DaggerFragment
 import javax.inject.Inject
@@ -67,9 +70,14 @@ class RepositoriesFragment :
         super.onStart()
         viewModel = ViewModelProviders.of(this, factory)[RepositoriesViewModel::class.java]
         initRecyclerView()
-        viewModel.displayTetrisRepos()
-        viewModel.repos.observe(this, Observer {
-            reposAdapter.submitList(it)
+        //viewModel.displayTetrisRepos()
+        viewModel.fetchTetrisRepos()
+        viewModel.results.observe(this, Observer {
+            when (it.status){
+                Resource.Status.LOADING -> loading()
+                Resource.Status.SUCCESS -> success(it.data)
+                Resource.Status.ERROR -> error(it.message)
+            }
         })
         viewModel.networkErrors.observe(this, Observer {
             error(it)
@@ -85,6 +93,12 @@ class RepositoriesFragment :
     private fun loading() {
         binding.loading.visibility = View.VISIBLE
     }
+
+    private fun success(data : PagedList<RepoEntity>?){
+        binding.loading.visibility = View.GONE
+        reposAdapter.submitList(data)
+    }
+
 
     private fun error(errorMessage: String?) {
         binding.loading.visibility = View.GONE

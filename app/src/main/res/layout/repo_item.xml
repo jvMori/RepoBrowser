@@ -3,7 +3,7 @@
        >
     <data>
         <variable name="repo"
-                  type="com.example.jvmori.repobrowser.data.repos.ReposUI"/>
+                  type="com.example.jvmori.repobrowser.data.base.local.RepoEntity"/>
     </data>
     <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"

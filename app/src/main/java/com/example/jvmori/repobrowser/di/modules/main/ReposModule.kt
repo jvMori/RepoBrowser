@@ -9,9 +9,14 @@ import com.example.jvmori.repobrowser.data.repos.ReposRepositoryImpl
 import com.example.jvmori.repobrowser.di.scopes.MainActivityScope
 import dagger.Module
 import dagger.Provides
+import io.reactivex.disposables.CompositeDisposable
 
 @Module
 class ReposModule {
+
+    @MainActivityScope
+    @Provides
+    fun provideDisposable(): CompositeDisposable = CompositeDisposable()
 
     @MainActivityScope
     @Provides
@@ -20,6 +25,6 @@ class ReposModule {
 
     @MainActivityScope
     @Provides
-    fun provideReposRepository(reposNetworkDataSource: ReposNetworkDataSource, localCache: LocalCache) : ReposRepository =
-        ReposRepositoryImpl(reposNetworkDataSource, localCache)
+    fun provideReposRepository(reposNetworkDataSource: ReposNetworkDataSource, localCache: LocalCache, disposable: CompositeDisposable) : ReposRepository =
+        ReposRepositoryImpl(reposNetworkDataSource, localCache, disposable)
 }
