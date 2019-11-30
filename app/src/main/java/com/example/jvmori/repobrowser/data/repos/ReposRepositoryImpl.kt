@@ -12,6 +12,9 @@ class ReposRepositoryImpl @Inject constructor(
     private val localCache: LocalCache,
     private val disposable: CompositeDisposable
 ) : ReposRepository {
+
+    private var repoResult = RepoResult(null, null)
+
     override fun fetchRepos(
         query: String
     ): RepoResult {
@@ -37,6 +40,8 @@ class ReposRepositoryImpl @Inject constructor(
             .setBoundaryCallback(boundaryCallback)
             .buildObservable()
 
-        return RepoResult(data, networkErrors)
+        repoResult.data = data
+        repoResult.networkErrors = networkErrors
+        return repoResult
     }
 }

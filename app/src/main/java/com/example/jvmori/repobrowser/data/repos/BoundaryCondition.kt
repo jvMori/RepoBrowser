@@ -41,7 +41,7 @@ class BoundaryCondition(
 
     private fun requestAndSaveData(query: String, page : Int) {
 
-       if (isRequestInProgress) return
+       //if (isRequestInProgress) return
 
         isRequestInProgress = true
         disposable.add(
@@ -58,7 +58,7 @@ class BoundaryCondition(
                         success(it, query, page)
                     }, {
                         isRequestInProgress = false
-                        error(it.message ?: "Error while downloading data")
+                        //error(it.message ?: "Error while downloading data")
                     }
                 )
         )

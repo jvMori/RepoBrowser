@@ -106,7 +106,7 @@ class RepositoriesFragment :
     }
 
     override fun onQueryTextSubmit(query: String?): Boolean {
-        viewModel.onQuerySubmit()
+        //viewModel.onQuerySubmit()
         return false
     }
 

@@ -6,6 +6,6 @@ import com.example.jvmori.repobrowser.data.base.local.RepoEntity
 import io.reactivex.Observable
 
 data class RepoResult(
-    val data: Observable<PagedList<RepoEntity>>,
-    val networkErrors: LiveData<String>
+    var data: Observable<PagedList<RepoEntity>>?,
+    var networkErrors: LiveData<String>?
 )
