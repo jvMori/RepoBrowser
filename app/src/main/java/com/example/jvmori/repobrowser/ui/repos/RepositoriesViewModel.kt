@@ -1,6 +1,5 @@
 package com.example.jvmori.repobrowser.ui.repos
 
-import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -10,7 +9,6 @@ import com.example.jvmori.repobrowser.data.base.network.Resource
 import com.example.jvmori.repobrowser.data.repos.ReposRepository
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.PublishSubject
 import java.util.concurrent.TimeUnit
@@ -27,6 +25,9 @@ class RepositoriesViewModel @Inject constructor(
     private val publishSubject = PublishSubject.create<String>()
     private val disposable = CompositeDisposable()
     private val tetrisDisposable = CompositeDisposable()
+
+    @Inject
+    lateinit var networkDisposable: CompositeDisposable
 
     fun fetchRepos(query : String = "tetris"){
         _results.value = Resource.loading(null)
@@ -74,6 +75,7 @@ class RepositoriesViewModel @Inject constructor(
 
     override fun onCleared() {
         super.onCleared()
+        networkDisposable.clear()
         disposable.clear()
     }
 }

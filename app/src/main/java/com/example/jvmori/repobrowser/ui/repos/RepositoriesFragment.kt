@@ -30,7 +30,8 @@ private const val ARG_PARAM2 = "param2"
 class RepositoriesFragment :
     DaggerFragment(),
     SearchView.OnQueryTextListener,
-    SearchView.OnCloseListener {
+    SearchView.OnCloseListener
+   {
 
     private lateinit var reposAdapter: ReposAdapter
     @Inject
@@ -73,16 +74,19 @@ class RepositoriesFragment :
         viewModel.fetchRepos()
         viewModel.configurePublishSubject()
         viewModel.results.observe(this, Observer {
-            when (it.status){
+            when (it.status) {
                 Resource.Status.LOADING -> loading()
                 Resource.Status.SUCCESS -> success(it.data)
                 Resource.Status.ERROR -> error(it.message)
             }
         })
+
+
 //        viewModel.networkErrors.observe(this, Observer {
 //            error(it)
 //        })
     }
+
     private fun initRecyclerView() {
         binding.loading.visibility = View.GONE
         reposAdapter = ReposAdapter()
@@ -90,11 +94,12 @@ class RepositoriesFragment :
             adapter = reposAdapter
         }
     }
+
     private fun loading() {
         binding.loading.visibility = View.VISIBLE
     }
 
-    private fun success(data : PagedList<RepoEntity>?){
+    private fun success(data: PagedList<RepoEntity>?) {
         binding.loading.visibility = View.GONE
         reposAdapter.submitList(data)
     }
@@ -120,5 +125,4 @@ class RepositoriesFragment :
         viewModel.fetchRepos()
         return false
     }
-
 }

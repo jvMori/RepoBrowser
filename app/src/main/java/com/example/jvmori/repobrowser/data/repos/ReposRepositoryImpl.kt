@@ -4,6 +4,7 @@ import androidx.paging.PagedList
 import androidx.paging.RxPagedListBuilder
 import com.example.jvmori.repobrowser.data.base.local.LocalCache
 import com.example.jvmori.repobrowser.utils.DATABASE_PAGE_SIZE
+import com.example.jvmori.repobrowser.utils.PagingRequestHelper
 import io.reactivex.disposables.CompositeDisposable
 import javax.inject.Inject
 
@@ -11,7 +12,8 @@ class ReposRepositoryImpl @Inject constructor(
     private val networkDataSource: ReposNetworkDataSource,
     private val localCache: LocalCache,
     private val disposable: CompositeDisposable,
-    private val  config : PagedList.Config
+    private val config: PagedList.Config,
+    private val helper: PagingRequestHelper
 ) : ReposRepository {
 
     private var repoResult = RepoResult(null, null)
@@ -25,7 +27,8 @@ class ReposRepositoryImpl @Inject constructor(
             query,
             networkDataSource,
             localCache,
-            disposable
+            disposable,
+            helper
         )
         val networkErrors = boundaryCallback.networkErrors
 

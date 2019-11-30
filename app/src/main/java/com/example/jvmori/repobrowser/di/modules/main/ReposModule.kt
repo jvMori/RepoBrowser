@@ -9,9 +9,11 @@ import com.example.jvmori.repobrowser.data.repos.ReposRepository
 import com.example.jvmori.repobrowser.data.repos.ReposRepositoryImpl
 import com.example.jvmori.repobrowser.di.scopes.MainActivityScope
 import com.example.jvmori.repobrowser.utils.DATABASE_PAGE_SIZE
+import com.example.jvmori.repobrowser.utils.PagingRequestHelper
 import dagger.Module
 import dagger.Provides
 import io.reactivex.disposables.CompositeDisposable
+import java.util.concurrent.Executors
 
 @Module
 class ReposModule {
@@ -19,6 +21,11 @@ class ReposModule {
     @MainActivityScope
     @Provides
     fun provideDisposable(): CompositeDisposable = CompositeDisposable()
+
+    @MainActivityScope
+    @Provides
+    fun providePagingRequestHelper() : PagingRequestHelper =
+        PagingRequestHelper(Executors.newSingleThreadExecutor())
 
     @MainActivityScope
     @Provides
@@ -42,7 +49,8 @@ class ReposModule {
         reposNetworkDataSource: ReposNetworkDataSource,
         localCache: LocalCache,
         disposable: CompositeDisposable,
-        config: PagedList.Config
+        config: PagedList.Config,
+        helper: PagingRequestHelper
     ): ReposRepository =
-        ReposRepositoryImpl(reposNetworkDataSource, localCache, disposable, config)
+        ReposRepositoryImpl(reposNetworkDataSource, localCache, disposable, config, helper)
 }
