@@ -15,7 +15,7 @@ class ReposAdapter : PagedListAdapter<RepoEntity, ReposViewHolder>(ReposDiffUtil
     }
 
     override fun onBindViewHolder(holder: ReposViewHolder, position: Int) {
-       holder.bindView(getItem(position) ?: RepoEntity(0,"", "", 0, false, ""))
+       holder.bindView(getItem(position) ?: RepoEntity(0,"", "", 0, false, "", 1))
     }
 }
 

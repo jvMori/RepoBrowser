@@ -2,7 +2,6 @@ package com.example.jvmori.repobrowser.data.base.local
 
 import android.util.Log
 import androidx.paging.DataSource
-import com.example.jvmori.repobrowser.data.repos.response.Repo
 import com.example.jvmori.repobrowser.utils.TAG
 import io.reactivex.Completable
 import io.reactivex.schedulers.Schedulers

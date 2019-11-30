@@ -28,7 +28,8 @@ class ReposRepositoryImpl @Inject constructor(
 
         val config = PagedList.Config.Builder()
             .setPageSize(DATABASE_PAGE_SIZE)
-            .setPrefetchDistance(2 * DATABASE_PAGE_SIZE)
+            .setPrefetchDistance(0)
+            .setInitialLoadSizeHint(DATABASE_PAGE_SIZE)
             .setEnablePlaceholders(true)
             .build()
 

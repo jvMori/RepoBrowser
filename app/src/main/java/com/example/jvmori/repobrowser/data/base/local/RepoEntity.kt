@@ -16,5 +16,7 @@ data class RepoEntity (
     @ColumnInfo(name = "repo_has_wiki")
     var hasWiki : Boolean,
     @ColumnInfo(name = "repo_query")
-    var query : String
+    var query : String,
+    @ColumnInfo(name="current_page")
+    var currentPage : Int
 )

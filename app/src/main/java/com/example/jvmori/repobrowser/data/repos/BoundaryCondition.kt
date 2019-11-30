@@ -5,7 +5,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.paging.PagedList
 import com.example.jvmori.repobrowser.data.base.local.LocalCache
 import com.example.jvmori.repobrowser.data.base.local.RepoEntity
-import com.example.jvmori.repobrowser.data.repos.response.Repo
 import com.example.jvmori.repobrowser.data.repos.response.ReposResponse
 import com.example.jvmori.repobrowser.utils.dataMapperRequestedReposToEntities
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -19,7 +18,7 @@ class BoundaryCondition(
     private val disposable: CompositeDisposable
 ) : PagedList.BoundaryCallback<RepoEntity>() {
 
-    private var lastRequestedPage = 1
+
     private val _networkErrors = MutableLiveData<String>()
     val networkErrors: LiveData<String>
         get() = _networkErrors
@@ -28,42 +27,46 @@ class BoundaryCondition(
 
     override fun onZeroItemsLoaded() {
         super.onZeroItemsLoaded()
-        requestAndSaveData(query)
+        requestAndSaveData(query, 1)
     }
 
     override fun onItemAtEndLoaded(itemAtEnd: RepoEntity) {
         super.onItemAtEndLoaded(itemAtEnd)
-        requestAndSaveData(query)
+        requestAndSaveData(query, itemAtEnd.currentPage + 1)
     }
 
     companion object {
         private const val NETWORK_PAGE_SIZE = 10
     }
 
-    private fun requestAndSaveData(query: String) {
+    private fun requestAndSaveData(query: String, page : Int) {
 
-        if (isRequestInProgress) return
+       // if (isRequestInProgress) return
 
         isRequestInProgress = true
         disposable.add(
-            networkDataSource.fetchRepos(query,
-                NETWORK_PAGE_SIZE, lastRequestedPage)
+            networkDataSource
+                .fetchRepos(
+                    query,
+                    NETWORK_PAGE_SIZE,
+                    page
+                )
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                     {
-                        success(it, query)
-                    },{
+                        success(it, query, page)
+                    }, {
                         isRequestInProgress = false
                         error(it.message ?: "Error while downloading data")
                     }
                 )
         )
     }
-    private fun success(response : ReposResponse, query: String){
+
+    private fun success(response: ReposResponse, query: String, page : Int) {
         val data = response.repositories
-        cache.insert(dataMapperRequestedReposToEntities(data, query)) {
-            lastRequestedPage++
+        cache.insert(dataMapperRequestedReposToEntities(data, query, page)) {
             isRequestInProgress = false
         }
     }

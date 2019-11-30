@@ -14,24 +14,25 @@ fun dataMapper(requestData: List<Repo>): List<ReposUI> {
     return array
 }
 
-fun dataMapperRequestedReposToEntities(requestData: List<Repo>, query: String): List<RepoEntity> {
+fun dataMapperRequestedReposToEntities(requestData: List<Repo>, query: String, page : Int): List<RepoEntity> {
     val array = mutableListOf<RepoEntity>()
     requestData.forEach { repo ->
         array.add(
-            requestedRepoToEntity(repo, query)
+            requestedRepoToEntity(repo, query, page)
         )
     }
     return array
 }
 
-fun requestedRepoToEntity(repo : Repo, query : String) : RepoEntity {
+fun requestedRepoToEntity(repo : Repo, query : String, page : Int) : RepoEntity {
     return RepoEntity(
         repo.id,
         repo.name,
         repo.owner.login,
         repo.size,
         repo.has_wiki,
-        query
+        query,
+        page
     )
 }
 
