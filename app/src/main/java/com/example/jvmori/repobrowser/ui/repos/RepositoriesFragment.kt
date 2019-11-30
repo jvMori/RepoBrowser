@@ -70,8 +70,8 @@ class RepositoriesFragment :
         super.onStart()
         viewModel = ViewModelProviders.of(this, factory)[RepositoriesViewModel::class.java]
         initRecyclerView()
-        //viewModel.displayTetrisRepos()
-        viewModel.fetchTetrisRepos()
+        viewModel.fetchRepos()
+        viewModel.configurePublishSubject()
         viewModel.results.observe(this, Observer {
             when (it.status){
                 Resource.Status.LOADING -> loading()
@@ -79,9 +79,9 @@ class RepositoriesFragment :
                 Resource.Status.ERROR -> error(it.message)
             }
         })
-        viewModel.networkErrors.observe(this, Observer {
-            error(it)
-        })
+//        viewModel.networkErrors.observe(this, Observer {
+//            error(it)
+//        })
     }
     private fun initRecyclerView() {
         binding.loading.visibility = View.GONE
@@ -106,6 +106,7 @@ class RepositoriesFragment :
     }
 
     override fun onQueryTextSubmit(query: String?): Boolean {
+        viewModel.onQuerySubmit()
         return false
     }
 
@@ -116,7 +117,7 @@ class RepositoriesFragment :
     }
 
     override fun onClose(): Boolean {
-       viewModel.displayTetrisRepos()
+        viewModel.fetchRepos()
         return false
     }
 
