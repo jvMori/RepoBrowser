@@ -1,12 +1,12 @@
 package com.example.jvmori.repobrowser.data.repos
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.paging.PagedList
 import com.example.jvmori.repobrowser.data.base.local.LocalCache
 import com.example.jvmori.repobrowser.data.base.local.RepoEntity
+import com.example.jvmori.repobrowser.data.base.network.Resource
 import com.example.jvmori.repobrowser.utils.PagingRequestHelper
 import com.example.jvmori.repobrowser.utils.dataMapperRequestedReposToEntities
+import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -19,41 +19,54 @@ class BoundaryCondition(
     private val helper: PagingRequestHelper
 ) : PagedList.BoundaryCallback<RepoEntity>() {
 
-    private val _networkErrors = MutableLiveData<String>()
-    val networkErrors: LiveData<String>
-        get() = _networkErrors
+    var networkState: Observable<Resource<String>> = Observable.just(Resource.loading(""))
 
     override fun onZeroItemsLoaded() {
         super.onZeroItemsLoaded()
-        requestAndSaveData(query, 1, PagingRequestHelper.RequestType.INITIAL)
+        requestAndSaveInit(query)
     }
 
     override fun onItemAtEndLoaded(itemAtEnd: RepoEntity) {
         super.onItemAtEndLoaded(itemAtEnd)
-        requestAndSaveData(query, itemAtEnd.currentPage + 1, PagingRequestHelper.RequestType.AFTER)
+        requestAndSaveAfter(query, itemAtEnd.currentPage + 1)
     }
 
     companion object {
         private const val NETWORK_PAGE_SIZE = 10
     }
 
-    private fun requestAndSaveData(query: String, page: Int, requestType: PagingRequestHelper.RequestType) {
-        helper.runIfNotRunning(requestType) { helperCallback ->
-            disposable.add(
-                networkDataSource.fetchRepos(query, NETWORK_PAGE_SIZE, page)
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(
-                        {
-                            val data = it.repositories
-                            cache.insert(dataMapperRequestedReposToEntities(data, query, page)) {
-                                helperCallback.recordSuccess()
-                            }
-                        }, {
-                            helperCallback.recordFailure(it)
-                        }
-                    )
-            )
+    private fun requestAndSaveInit(query: String) {
+        fetchFromNetworkAndSave(query, 1, null)
+    }
+
+    private fun requestAndSaveAfter(query: String, page: Int) {
+        helper.runIfNotRunning(PagingRequestHelper.RequestType.AFTER) { helperCallback ->
+            fetchFromNetworkAndSave(query, page, helperCallback)
         }
+    }
+
+    private fun fetchFromNetworkAndSave(
+        query: String,
+        page: Int,
+        helperCallback: PagingRequestHelper.Request.Callback?
+    ) {
+        networkState = Observable.just(Resource.loading(""))
+        disposable.add(
+            networkDataSource.fetchRepos(query, NETWORK_PAGE_SIZE, page)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                    {
+                        val data = it.repositories
+                        helperCallback?.recordSuccess()
+                        cache.insert(dataMapperRequestedReposToEntities(data, query, page)) {
+                            networkState = Observable.just(Resource.success(""))
+                        }
+                    }, {
+                        helperCallback?.recordFailure(it)
+                        networkState = Observable.just(Resource.error(it.localizedMessage, ""))
+                    }
+                )
+        )
     }
 }

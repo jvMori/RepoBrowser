@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.paging.PagedList
 import com.example.jvmori.repobrowser.data.base.local.RepoEntity
 import com.example.jvmori.repobrowser.data.base.network.Resource
+import com.example.jvmori.repobrowser.data.repos.RepoResult
 import com.example.jvmori.repobrowser.data.repos.ReposRepository
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -28,11 +29,12 @@ class RepositoriesViewModel @Inject constructor(
 
     @Inject
     lateinit var networkDisposable: CompositeDisposable
+    private lateinit var  repoResult : RepoResult
 
     fun fetchRepos(query : String = "tetris"){
-        _results.value = Resource.loading(null)
+        repoResult = repository.fetchRepos(query)
         tetrisDisposable.add(
-            repository.fetchRepos(query).data?.subscribe(
+            repoResult.data?.subscribe(
                 {
                     _results.value = Resource.success(it)
                 },{
@@ -45,13 +47,14 @@ class RepositoriesViewModel @Inject constructor(
     fun configurePublishSubject() {
         disposable.add(
             publishSubject
-                .debounce(600, TimeUnit.MILLISECONDS)
+                .debounce(300, TimeUnit.MILLISECONDS)
                 .distinctUntilChanged()
-                .filter{query -> query.isNotEmpty()}
+                .filter {query -> query.isNotEmpty()}
                 .switchMap {
                     _results.postValue(Resource.loading(null))
                     tetrisDisposable.clear()
-                    repository.fetchRepos(it).data
+                    repoResult = repository.fetchRepos(it)
+                    repoResult.data
                 }
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

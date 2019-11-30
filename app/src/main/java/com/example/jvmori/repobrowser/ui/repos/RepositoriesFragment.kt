@@ -30,8 +30,7 @@ private const val ARG_PARAM2 = "param2"
 class RepositoriesFragment :
     DaggerFragment(),
     SearchView.OnQueryTextListener,
-    SearchView.OnCloseListener
-   {
+    SearchView.OnCloseListener {
 
     private lateinit var reposAdapter: ReposAdapter
     @Inject
@@ -75,16 +74,10 @@ class RepositoriesFragment :
         viewModel.configurePublishSubject()
         viewModel.results.observe(this, Observer {
             when (it.status) {
-                Resource.Status.LOADING -> loading()
                 Resource.Status.SUCCESS -> success(it.data)
                 Resource.Status.ERROR -> error(it.message)
             }
         })
-
-
-//        viewModel.networkErrors.observe(this, Observer {
-//            error(it)
-//        })
     }
 
     private fun initRecyclerView() {
@@ -104,14 +97,13 @@ class RepositoriesFragment :
         reposAdapter.submitList(data)
     }
 
-
     private fun error(errorMessage: String?) {
         binding.loading.visibility = View.GONE
         Toast.makeText(this.requireContext(), errorMessage, Toast.LENGTH_LONG).show()
     }
 
     override fun onQueryTextSubmit(query: String?): Boolean {
-        //viewModel.onQuerySubmit()
+        viewModel.onQueryTextChange(query)
         return false
     }
 
