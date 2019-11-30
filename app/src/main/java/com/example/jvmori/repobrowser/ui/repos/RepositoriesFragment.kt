@@ -42,6 +42,8 @@ class RepositoriesFragment :
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
+        viewModel = ViewModelProviders.of(this, factory)[RepositoriesViewModel::class.java]
+        viewModel.fetchRepos()
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -68,9 +70,7 @@ class RepositoriesFragment :
 
     override fun onStart() {
         super.onStart()
-        viewModel = ViewModelProviders.of(this, factory)[RepositoriesViewModel::class.java]
         initRecyclerView()
-        viewModel.fetchRepos()
         viewModel.configurePublishSubject()
         viewModel.results.observe(this, Observer {
             when (it.status) {
