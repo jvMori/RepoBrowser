@@ -10,7 +10,8 @@ import javax.inject.Inject
 class ReposRepositoryImpl @Inject constructor(
     private val networkDataSource: ReposNetworkDataSource,
     private val localCache: LocalCache,
-    private val disposable: CompositeDisposable
+    private val disposable: CompositeDisposable,
+    private val  config : PagedList.Config
 ) : ReposRepository {
 
     private var repoResult = RepoResult(null, null)
@@ -26,15 +27,7 @@ class ReposRepositoryImpl @Inject constructor(
             localCache,
             disposable
         )
-
         val networkErrors = boundaryCallback.networkErrors
-
-        val config = PagedList.Config.Builder()
-            .setPageSize(DATABASE_PAGE_SIZE)
-            .setPrefetchDistance(0)
-            .setInitialLoadSizeHint(DATABASE_PAGE_SIZE)
-            .setEnablePlaceholders(true)
-            .build()
 
         val data = RxPagedListBuilder(dataSourceFactory, config)
             .setBoundaryCallback(boundaryCallback)
