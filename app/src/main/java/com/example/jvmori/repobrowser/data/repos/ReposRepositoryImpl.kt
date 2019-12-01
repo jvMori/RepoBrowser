@@ -12,7 +12,7 @@ class ReposRepositoryImpl @Inject constructor(
     private val localCache: LocalCache,
     private val disposable: CompositeDisposable,
     private val config: PagedList.Config,
-    private val helper: PagingRequestHelper
+    private val helper : PagingRequestHelper
 ) : ReposRepository {
 
     override fun fetchRepos(
@@ -28,12 +28,11 @@ class ReposRepositoryImpl @Inject constructor(
             disposable,
             helper
         )
-        val networkState = boundaryCallback.networkState
 
         val data = RxPagedListBuilder(dataSourceFactory, config)
             .setBoundaryCallback(boundaryCallback)
             .buildObservable()
 
-        return RepoResult(data, networkState)
+        return RepoResult(data, helper)
     }
 }

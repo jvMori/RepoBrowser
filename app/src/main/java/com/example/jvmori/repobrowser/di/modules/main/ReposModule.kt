@@ -22,7 +22,6 @@ class ReposModule {
     @Provides
     fun provideDisposable(): CompositeDisposable = CompositeDisposable()
 
-    @MainActivityScope
     @Provides
     fun providePagingRequestHelper() : PagingRequestHelper =
         PagingRequestHelper(Executors.newSingleThreadExecutor())
@@ -32,7 +31,7 @@ class ReposModule {
     fun providePagedListConfig(): PagedList.Config {
         return PagedList.Config.Builder()
             .setPageSize(DATABASE_PAGE_SIZE)
-            .setPrefetchDistance(3 * DATABASE_PAGE_SIZE)
+            .setPrefetchDistance(2 * DATABASE_PAGE_SIZE)
             .setInitialLoadSizeHint(DATABASE_PAGE_SIZE)
             .setEnablePlaceholders(true)
             .build()

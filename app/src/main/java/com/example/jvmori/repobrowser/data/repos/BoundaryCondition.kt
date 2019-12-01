@@ -10,6 +10,7 @@ import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import java.util.concurrent.Executors
 
 class BoundaryCondition(
     private val query: String,
@@ -18,8 +19,6 @@ class BoundaryCondition(
     private val disposable: CompositeDisposable,
     private val helper: PagingRequestHelper
 ) : PagedList.BoundaryCallback<RepoEntity>() {
-
-    var networkState: Observable<Resource<String>> = Observable.just(Resource.loading(""))
 
     override fun onZeroItemsLoaded() {
         super.onZeroItemsLoaded()
@@ -50,7 +49,6 @@ class BoundaryCondition(
         page: Int,
         helperCallback: PagingRequestHelper.Request.Callback?
     ) {
-        networkState = Observable.just(Resource.loading(""))
         disposable.add(
             networkDataSource.fetchRepos(query, NETWORK_PAGE_SIZE, page)
                 .subscribeOn(Schedulers.io())
@@ -58,13 +56,11 @@ class BoundaryCondition(
                 .subscribe(
                     {
                         val data = it.repositories
-                        helperCallback?.recordSuccess()
                         cache.insert(dataMapperRequestedReposToEntities(data, query, page)) {
-                            networkState = Observable.just(Resource.success(""))
+                            helperCallback?.recordSuccess()
                         }
                     }, {
                         helperCallback?.recordFailure(it)
-                        networkState = Observable.just(Resource.error(it.localizedMessage, ""))
                     }
                 )
         )

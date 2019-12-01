@@ -74,6 +74,7 @@ class RepositoriesFragment :
         viewModel.configurePublishSubject()
         viewModel.results.observe(this, Observer {
             when (it.status) {
+                Resource.Status.LOADING -> loading()
                 Resource.Status.SUCCESS -> success(it.data)
                 Resource.Status.ERROR -> error(it.message)
             }
@@ -93,7 +94,8 @@ class RepositoriesFragment :
     }
 
     private fun success(data: PagedList<RepoEntity>?) {
-        binding.loading.visibility = View.GONE
+        if (data != null && data.isNotEmpty())
+            binding.loading.visibility = View.GONE
         reposAdapter.submitList(data)
     }
 
