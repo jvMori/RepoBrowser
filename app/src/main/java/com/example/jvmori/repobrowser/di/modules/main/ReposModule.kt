@@ -9,11 +9,9 @@ import com.example.jvmori.repobrowser.data.repos.ReposRepository
 import com.example.jvmori.repobrowser.data.repos.ReposRepositoryImpl
 import com.example.jvmori.repobrowser.di.scopes.MainActivityScope
 import com.example.jvmori.repobrowser.utils.DATABASE_PAGE_SIZE
-import com.example.jvmori.repobrowser.utils.PagingRequestHelper
 import dagger.Module
 import dagger.Provides
 import io.reactivex.disposables.CompositeDisposable
-import java.util.concurrent.Executors
 
 @Module
 class ReposModule {
@@ -22,16 +20,12 @@ class ReposModule {
     @Provides
     fun provideDisposable(): CompositeDisposable = CompositeDisposable()
 
-    @Provides
-    fun providePagingRequestHelper() : PagingRequestHelper =
-        PagingRequestHelper(Executors.newSingleThreadExecutor())
-
     @MainActivityScope
     @Provides
     fun providePagedListConfig(): PagedList.Config {
         return PagedList.Config.Builder()
             .setPageSize(DATABASE_PAGE_SIZE)
-            .setPrefetchDistance(2 * DATABASE_PAGE_SIZE)
+            .setPrefetchDistance(3 * DATABASE_PAGE_SIZE)
             .setInitialLoadSizeHint(DATABASE_PAGE_SIZE)
             .setEnablePlaceholders(true)
             .build()
@@ -48,8 +42,7 @@ class ReposModule {
         reposNetworkDataSource: ReposNetworkDataSource,
         localCache: LocalCache,
         disposable: CompositeDisposable,
-        config: PagedList.Config,
-        helper: PagingRequestHelper
+        config: PagedList.Config
     ): ReposRepository =
-        ReposRepositoryImpl(reposNetworkDataSource, localCache, disposable, config, helper)
+        ReposRepositoryImpl(reposNetworkDataSource, localCache, disposable, config)
 }

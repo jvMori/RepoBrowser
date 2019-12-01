@@ -1,6 +1,5 @@
 package com.example.jvmori.repobrowser.ui.repos
 
-import android.os.Build
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -9,13 +8,11 @@ import com.example.jvmori.repobrowser.data.base.local.RepoEntity
 import com.example.jvmori.repobrowser.data.base.network.Resource
 import com.example.jvmori.repobrowser.data.repos.RepoResult
 import com.example.jvmori.repobrowser.data.repos.ReposRepository
-import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.PublishSubject
 import java.util.concurrent.TimeUnit
-import java.util.function.BiFunction
 import javax.inject.Inject
 
 
@@ -70,23 +67,20 @@ class RepositoriesViewModel @Inject constructor(
     }
 
     private fun checkNetworkStatus() {
-        repoResult.helper.addListener { status ->
-            if (status.hasRunning()) {
-                _results.postValue(Resource.loading(null))
-            } else if (status.hasError()) {
-                _results.postValue(Resource.error("Network error", null))
+        disposable.add(
+            repoResult.networkStatus.subscribe {
+                when (it.status) {
+                    Resource.Status.LOADING -> _results.postValue(Resource.loading(null))
+                    Resource.Status.ERROR -> _results.postValue(Resource.error(it.data ?: "Network error", null))
+                }
             }
-        }
+        )
     }
 
     fun onQueryTextChange(query: String?) {
         if (query != null && query.isNotEmpty()) {
             publishSubject.onNext(query)
         }
-    }
-
-    fun onQuerySubmit() {
-        publishSubject.onComplete()
     }
 
     override fun onCleared() {

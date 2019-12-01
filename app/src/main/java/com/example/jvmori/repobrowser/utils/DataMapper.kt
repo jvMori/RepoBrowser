@@ -1,18 +1,7 @@
 package com.example.jvmori.repobrowser.utils
 
 import com.example.jvmori.repobrowser.data.base.local.RepoEntity
-import com.example.jvmori.repobrowser.data.repos.ReposUI
 import com.example.jvmori.repobrowser.data.repos.response.Repo
-
-fun dataMapper(requestData: List<Repo>): List<ReposUI> {
-    val array = mutableListOf<ReposUI>()
-    requestData.forEach { repo ->
-        array.add(
-            mapRepo(repo)
-        )
-    }
-    return array
-}
 
 fun dataMapperRequestedReposToEntities(requestData: List<Repo>, query: String, page : Int): List<RepoEntity> {
     val array = mutableListOf<RepoEntity>()
@@ -34,14 +23,4 @@ fun requestedRepoToEntity(repo : Repo, query : String, page : Int) : RepoEntity 
         query,
         page
     )
-}
-
-fun mapRepo(repo: Repo?): ReposUI {
-    return ReposUI(
-        repo?.name,
-        repo?.owner?.login,
-        repo?.size,
-        repo?.has_wiki
-    )
-
 }

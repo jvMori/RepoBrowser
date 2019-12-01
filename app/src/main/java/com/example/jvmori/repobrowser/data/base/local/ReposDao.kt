@@ -1,8 +1,9 @@
 package com.example.jvmori.repobrowser.data.base.local
 
-import androidx.room.*
-import com.example.jvmori.repobrowser.data.repos.response.Repo
-import com.example.jvmori.repobrowser.data.repos.response.ReposResponse
+import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.Query
 
 @Dao
 interface ReposDao {

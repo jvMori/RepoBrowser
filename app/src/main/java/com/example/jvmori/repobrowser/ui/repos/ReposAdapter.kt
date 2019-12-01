@@ -4,7 +4,6 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.paging.PagedListAdapter
 import com.example.jvmori.repobrowser.data.base.local.RepoEntity
-import com.example.jvmori.repobrowser.data.repos.response.Repo
 import com.example.jvmori.repobrowser.databinding.RepoItemBinding
 
 class ReposAdapter : PagedListAdapter<RepoEntity, ReposViewHolder>(ReposDiffUtilCallback()) {

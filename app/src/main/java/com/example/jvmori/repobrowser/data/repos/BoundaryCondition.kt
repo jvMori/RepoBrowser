@@ -4,50 +4,38 @@ import androidx.paging.PagedList
 import com.example.jvmori.repobrowser.data.base.local.LocalCache
 import com.example.jvmori.repobrowser.data.base.local.RepoEntity
 import com.example.jvmori.repobrowser.data.base.network.Resource
-import com.example.jvmori.repobrowser.utils.PagingRequestHelper
 import com.example.jvmori.repobrowser.utils.dataMapperRequestedReposToEntities
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import java.util.concurrent.Executors
 
 class BoundaryCondition(
     private val query: String,
     private val networkDataSource: ReposNetworkDataSource,
     private val cache: LocalCache,
-    private val disposable: CompositeDisposable,
-    private val helper: PagingRequestHelper
+    private val disposable: CompositeDisposable
 ) : PagedList.BoundaryCallback<RepoEntity>() {
 
     override fun onZeroItemsLoaded() {
         super.onZeroItemsLoaded()
-        requestAndSaveInit(query)
+        fetchFromNetworkAndSave(query, 1)
     }
 
     override fun onItemAtEndLoaded(itemAtEnd: RepoEntity) {
         super.onItemAtEndLoaded(itemAtEnd)
-        requestAndSaveAfter(query, itemAtEnd.currentPage + 1)
+        fetchFromNetworkAndSave(query, itemAtEnd.currentPage + 1)
     }
 
     companion object {
         private const val NETWORK_PAGE_SIZE = 10
     }
 
-    private fun requestAndSaveInit(query: String) {
-        fetchFromNetworkAndSave(query, 1, null)
-    }
-
-    private fun requestAndSaveAfter(query: String, page: Int) {
-        helper.runIfNotRunning(PagingRequestHelper.RequestType.AFTER) { helperCallback ->
-            fetchFromNetworkAndSave(query, page, helperCallback)
-        }
-    }
+    var networkStatus : Observable<Resource<String>> = Observable.just(Resource.loading(""))
 
     private fun fetchFromNetworkAndSave(
         query: String,
-        page: Int,
-        helperCallback: PagingRequestHelper.Request.Callback?
+        page: Int
     ) {
         disposable.add(
             networkDataSource.fetchRepos(query, NETWORK_PAGE_SIZE, page)
@@ -57,10 +45,10 @@ class BoundaryCondition(
                     {
                         val data = it.repositories
                         cache.insert(dataMapperRequestedReposToEntities(data, query, page)) {
-                            helperCallback?.recordSuccess()
+                            networkStatus = Observable.just(Resource.success("success"))
                         }
                     }, {
-                        helperCallback?.recordFailure(it)
+                        networkStatus = Observable.just(Resource.error(it.message ?: "Network error", ""))
                     }
                 )
         )
