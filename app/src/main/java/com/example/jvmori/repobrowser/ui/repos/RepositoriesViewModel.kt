@@ -33,6 +33,7 @@ class RepositoriesViewModel @Inject constructor(
 
     fun fetchRepos(query: String = "tetris") {
         repoResult = repository.fetchRepos(query)
+        _results.value = Resource.loading(null)
         tetrisDisposable.add(
             repoResult.data?.subscribe(
                 {
