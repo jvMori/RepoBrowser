@@ -4,6 +4,7 @@ import androidx.paging.PagedList
 import com.example.jvmori.repobrowser.data.base.local.LocalCache
 import com.example.jvmori.repobrowser.data.base.local.RepoEntity
 import com.example.jvmori.repobrowser.data.base.network.Resource
+import com.example.jvmori.repobrowser.data.repos.response.ReposResponse
 import com.example.jvmori.repobrowser.utils.NetworkStatus
 import com.example.jvmori.repobrowser.utils.dataMapperRequestedReposToEntities
 import com.example.jvmori.repobrowser.utils.handleNetworkError
@@ -20,6 +21,8 @@ class BoundaryCondition(
     private val disposable: CompositeDisposable,
     var networkStatus : PublishSubject<NetworkStatus>
 ) : PagedList.BoundaryCallback<RepoEntity>() {
+
+    private var isNetworkRequestOnGoing = false
 
     override fun onZeroItemsLoaded() {
         super.onZeroItemsLoaded()
@@ -39,6 +42,13 @@ class BoundaryCondition(
         query: String,
         page: Int
     ) {
+        if (!isNetworkRequestOnGoing){
+            isNetworkRequestOnGoing = true
+            requestData(query, page)
+        }
+    }
+
+    private fun requestData(query: String, page: Int) {
         networkStatus.onNext(NetworkStatus.NetworkLoading)
         disposable.add(
             networkDataSource.fetchRepos(query, NETWORK_PAGE_SIZE, page)
@@ -46,14 +56,24 @@ class BoundaryCondition(
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                     {
-                        val data = it.repositories
-                        cache.insert(dataMapperRequestedReposToEntities(data, query, page)) {
-                            networkStatus.onNext(NetworkStatus.NetworkSuccess)
-                        }
+                        cacheData(it, query, page)
                     }, {
                         networkStatus.onNext(handleNetworkError(it))
+                        isNetworkRequestOnGoing = false
                     }
                 )
         )
+    }
+
+    private fun cacheData(
+        it: ReposResponse,
+        query: String,
+        page: Int
+    ) {
+        val data = it.repositories
+        cache.insert(dataMapperRequestedReposToEntities(data, query, page)) {
+            networkStatus.onNext(NetworkStatus.NetworkSuccess)
+            isNetworkRequestOnGoing = false
+        }
     }
 }
