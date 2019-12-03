@@ -31,7 +31,7 @@ class ReposModule {
     fun providePagedListConfig(): PagedList.Config {
         return PagedList.Config.Builder()
             .setPageSize(DATABASE_PAGE_SIZE)
-            .setPrefetchDistance(3 * DATABASE_PAGE_SIZE)
+            .setPrefetchDistance(DATABASE_PAGE_SIZE)
             .setInitialLoadSizeHint(DATABASE_PAGE_SIZE)
             .setEnablePlaceholders(true)
             .build()

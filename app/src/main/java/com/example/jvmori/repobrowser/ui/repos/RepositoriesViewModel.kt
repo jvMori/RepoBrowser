@@ -87,11 +87,9 @@ class RepositoriesViewModel @Inject constructor(
                     when (it){
                         is NetworkStatus.NetworkLoading -> {
                             _networkState.value = NetworkState("", true)
-                           // reposAdapter.addLoadingAtBottom()
                         }
                         is NetworkStatus.NetworkSuccess -> {
                             _networkState.value = NetworkState("", false)
-                           // reposAdapter.removeLoadingFooter()
                         }
                         is NetworkStatus.NetworkErrorForbidden -> {
                             _networkState.value = NetworkState(

@@ -75,6 +75,8 @@ class RepositoriesFragment :
         viewModel.observeNetworkStatus(reposAdapter)
         viewModel.networkState.observe(this, Observer {
             reposAdapter.networkState = it
+            if (it.errorMessage.isNotEmpty())
+                Toast.makeText(this.requireContext(), it.errorMessage, Toast.LENGTH_SHORT).show()
         })
         viewModel.configurePublishSubject()
         viewModel.results.observe(this, Observer {
