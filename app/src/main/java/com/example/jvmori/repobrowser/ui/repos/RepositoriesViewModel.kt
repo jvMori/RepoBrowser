@@ -1,5 +1,6 @@
 package com.example.jvmori.repobrowser.ui.repos
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -8,6 +9,8 @@ import com.example.jvmori.repobrowser.data.base.local.RepoEntity
 import com.example.jvmori.repobrowser.data.base.network.Resource
 import com.example.jvmori.repobrowser.data.repos.RepoResult
 import com.example.jvmori.repobrowser.data.repos.ReposRepository
+import com.example.jvmori.repobrowser.utils.NetworkStatus
+import com.example.jvmori.repobrowser.utils.TAG
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -29,6 +32,8 @@ class RepositoriesViewModel @Inject constructor(
 
     @Inject
     lateinit var networkDisposable: CompositeDisposable
+    @Inject
+    lateinit var networkStatus : PublishSubject<NetworkStatus>
     private lateinit var repoResult: RepoResult
 
     fun fetchRepos(query: String = "tetris") {
@@ -54,7 +59,6 @@ class RepositoriesViewModel @Inject constructor(
                 .switchMap {
                     tetrisDisposable.clear()
                     repoResult = repository.fetchRepos(it)
-                    checkNetworkStatus()
                     repoResult.data
                 }
                 .subscribeOn(Schedulers.io())
@@ -67,14 +71,13 @@ class RepositoriesViewModel @Inject constructor(
         )
     }
 
-    private fun checkNetworkStatus() {
+     fun observeNetworkStatus() {
         disposable.add(
-            repoResult.networkStatus.subscribe {
-                when (it.status) {
-                    Resource.Status.LOADING -> _results.postValue(Resource.loading(null))
-                    Resource.Status.ERROR -> _results.postValue(Resource.error(it.data ?: "Network error", null))
+            networkStatus
+                .doOnNext {
+                    Log.i(TAG, it.toString())
                 }
-            }
+                .subscribe()
         )
     }
 
@@ -88,5 +91,6 @@ class RepositoriesViewModel @Inject constructor(
         super.onCleared()
         networkDisposable.clear()
         disposable.clear()
+        networkStatus.onComplete()
     }
 }

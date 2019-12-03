@@ -9,9 +9,11 @@ import com.example.jvmori.repobrowser.data.repos.ReposRepository
 import com.example.jvmori.repobrowser.data.repos.ReposRepositoryImpl
 import com.example.jvmori.repobrowser.di.scopes.MainActivityScope
 import com.example.jvmori.repobrowser.utils.DATABASE_PAGE_SIZE
+import com.example.jvmori.repobrowser.utils.NetworkStatus
 import dagger.Module
 import dagger.Provides
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.subjects.PublishSubject
 
 @Module
 class ReposModule {
@@ -19,6 +21,10 @@ class ReposModule {
     @MainActivityScope
     @Provides
     fun provideDisposable(): CompositeDisposable = CompositeDisposable()
+
+    @MainActivityScope
+    @Provides
+    fun provideNetworkStatus() : PublishSubject<NetworkStatus> = PublishSubject.create()
 
     @MainActivityScope
     @Provides
@@ -42,7 +48,8 @@ class ReposModule {
         reposNetworkDataSource: ReposNetworkDataSource,
         localCache: LocalCache,
         disposable: CompositeDisposable,
-        config: PagedList.Config
+        config: PagedList.Config,
+        networkStatus: PublishSubject<NetworkStatus>
     ): ReposRepository =
-        ReposRepositoryImpl(reposNetworkDataSource, localCache, disposable, config)
+        ReposRepositoryImpl(reposNetworkDataSource, localCache, disposable, config, networkStatus)
 }

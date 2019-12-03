@@ -7,5 +7,5 @@ import io.reactivex.Observable
 
 data class RepoResult(
     var data: Observable<PagedList<RepoEntity>>?,
-    var networkStatus: Observable<Resource<String>>
+    var networkStatus: Observable<Resource<String>>?
 )

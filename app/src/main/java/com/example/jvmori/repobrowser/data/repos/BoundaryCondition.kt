@@ -4,17 +4,21 @@ import androidx.paging.PagedList
 import com.example.jvmori.repobrowser.data.base.local.LocalCache
 import com.example.jvmori.repobrowser.data.base.local.RepoEntity
 import com.example.jvmori.repobrowser.data.base.network.Resource
+import com.example.jvmori.repobrowser.utils.NetworkStatus
 import com.example.jvmori.repobrowser.utils.dataMapperRequestedReposToEntities
+import com.example.jvmori.repobrowser.utils.handleNetworkError
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import io.reactivex.subjects.PublishSubject
 
 class BoundaryCondition(
     private val query: String,
     private val networkDataSource: ReposNetworkDataSource,
     private val cache: LocalCache,
-    private val disposable: CompositeDisposable
+    private val disposable: CompositeDisposable,
+    var networkStatus : PublishSubject<NetworkStatus>
 ) : PagedList.BoundaryCallback<RepoEntity>() {
 
     override fun onZeroItemsLoaded() {
@@ -31,12 +35,11 @@ class BoundaryCondition(
         private const val NETWORK_PAGE_SIZE = 10
     }
 
-    var networkStatus : Observable<Resource<String>> = Observable.just(Resource.loading(""))
-
     private fun fetchFromNetworkAndSave(
         query: String,
         page: Int
     ) {
+        networkStatus.onNext(NetworkStatus.NetworkLoading)
         disposable.add(
             networkDataSource.fetchRepos(query, NETWORK_PAGE_SIZE, page)
                 .subscribeOn(Schedulers.io())
@@ -45,10 +48,10 @@ class BoundaryCondition(
                     {
                         val data = it.repositories
                         cache.insert(dataMapperRequestedReposToEntities(data, query, page)) {
-                            networkStatus = Observable.just(Resource.success("success"))
+                            networkStatus.onNext(NetworkStatus.NetworkSuccess)
                         }
                     }, {
-                        networkStatus = Observable.just(Resource.error(it.message ?: "Network error", ""))
+                        networkStatus.onNext(handleNetworkError(it))
                     }
                 )
         )

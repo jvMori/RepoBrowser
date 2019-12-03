@@ -44,6 +44,7 @@ class RepositoriesFragment :
         setHasOptionsMenu(true)
         viewModel = ViewModelProviders.of(this, factory)[RepositoriesViewModel::class.java]
         viewModel.fetchRepos()
+        viewModel.observeNetworkStatus()
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {

@@ -17,6 +17,9 @@ class LocalCacheImpl @Inject constructor(
             .doOnError {
                 Log.i(TAG, "Error while saving data")
             }
+            .doOnComplete{
+                onSuccess()
+            }
             .subscribe()
     }
 
