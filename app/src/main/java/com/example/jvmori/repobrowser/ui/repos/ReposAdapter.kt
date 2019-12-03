@@ -6,13 +6,11 @@ import androidx.lifecycle.LiveData
 import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.jvmori.repobrowser.data.base.local.RepoEntity
-import com.example.jvmori.repobrowser.databinding.LoadingRepoItemBinding
+import com.example.jvmori.repobrowser.databinding.LoadingItem
 import com.example.jvmori.repobrowser.databinding.RepoItemBinding
 import com.example.jvmori.repobrowser.utils.NetworkState
 
-class ReposAdapter(
-    var networkState: NetworkState?
-) : PagedListAdapter<RepoEntity, RecyclerView.ViewHolder>(ReposDiffUtilCallback()) {
+class ReposAdapter: PagedListAdapter<RepoEntity, RecyclerView.ViewHolder>(ReposDiffUtilCallback()) {
 
     private var isLoadingAdded = false
 
@@ -21,8 +19,10 @@ class ReposAdapter(
         const val LOADING = 1
     }
 
+    var networkState = NetworkState("", false)
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        when (viewType){
+        when (viewType) {
             ViewType.LOADING -> loadingViewHolder(parent)
         }
         return reposViewHolder(parent)
@@ -36,7 +36,7 @@ class ReposAdapter(
 
     private fun loadingViewHolder(parent: ViewGroup): LoadingViewHolder {
         val inflater = LayoutInflater.from(parent.context)
-        val binding = LoadingRepoItemBinding.inflate(inflater, parent, false)
+        val binding = LoadingItem.inflate(inflater, parent, false)
         return LoadingViewHolder(binding)
     }
 
@@ -52,9 +52,7 @@ class ReposAdapter(
         holder: RecyclerView.ViewHolder
     ) {
         if (holder is LoadingViewHolder)
-            holder.bindView(
-                networkState ?: NetworkState("", false)
-            )
+            holder.bindView(networkState)
     }
 
     private fun bindItem(
@@ -72,8 +70,10 @@ class ReposAdapter(
     }
 
     fun addLoadingAtBottom() {
-        isLoadingAdded = true
-        currentList?.add(null)
+        if (!isLoadingAdded) {
+            isLoadingAdded = true
+            currentList?.add(RepoEntity())
+        }
     }
 
     fun removeLoadingFooter() {
@@ -83,6 +83,5 @@ class ReposAdapter(
             currentList?.removeAt(position)
         }
     }
-
 }
 

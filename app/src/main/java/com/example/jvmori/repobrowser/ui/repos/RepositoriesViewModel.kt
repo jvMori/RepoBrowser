@@ -1,14 +1,18 @@
 package com.example.jvmori.repobrowser.ui.repos
 
+import android.provider.Settings.Global.getString
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.paging.PagedList
+import com.example.jvmori.repobrowser.R
 import com.example.jvmori.repobrowser.data.base.local.RepoEntity
 import com.example.jvmori.repobrowser.data.base.network.Resource
 import com.example.jvmori.repobrowser.data.repos.RepoResult
 import com.example.jvmori.repobrowser.data.repos.ReposRepository
+import com.example.jvmori.repobrowser.ui.MainActivity
+import com.example.jvmori.repobrowser.utils.NetworkState
 import com.example.jvmori.repobrowser.utils.NetworkStatus
 import com.example.jvmori.repobrowser.utils.TAG
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -20,11 +24,15 @@ import javax.inject.Inject
 
 
 class RepositoriesViewModel @Inject constructor(
-    private val repository: ReposRepository
+    private val repository: ReposRepository,
+    private val context : MainActivity
 ) : ViewModel() {
 
     private val _results = MutableLiveData<Resource<PagedList<RepoEntity>>>()
     val results: LiveData<Resource<PagedList<RepoEntity>>> = _results
+
+    private val _networkState = MutableLiveData<NetworkState>()
+    val networkState : LiveData<NetworkState> = _networkState
 
     private val publishSubject = PublishSubject.create<String>()
     private val disposable = CompositeDisposable()
@@ -71,11 +79,34 @@ class RepositoriesViewModel @Inject constructor(
         )
     }
 
-     fun observeNetworkStatus() {
+     fun observeNetworkStatus(reposAdapter: ReposAdapter) {
         disposable.add(
             networkStatus
+                .observeOn(AndroidSchedulers.mainThread())
                 .doOnNext {
-                    Log.i(TAG, it.toString())
+                    when (it){
+                        is NetworkStatus.NetworkLoading -> {
+                            _networkState.value = NetworkState("", true)
+                           // reposAdapter.addLoadingAtBottom()
+                        }
+                        is NetworkStatus.NetworkSuccess -> {
+                            _networkState.value = NetworkState("", false)
+                           // reposAdapter.removeLoadingFooter()
+                        }
+                        is NetworkStatus.NetworkErrorForbidden -> {
+                            _networkState.value = NetworkState(
+                                context.resources.getString(R.string.error_forbidden),
+                                false
+                            )
+                        }
+                        is NetworkStatus.NetworkErrorUnknown ->
+                        {
+                            _networkState.value = NetworkState(
+                                context.resources.getString(R.string.error_network_unknown),
+                                false
+                            )
+                        }
+                    }
                 }
                 .subscribe()
         )

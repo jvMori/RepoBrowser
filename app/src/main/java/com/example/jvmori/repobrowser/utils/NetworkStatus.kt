@@ -15,11 +15,10 @@ fun handleNetworkError(status : Throwable?) : NetworkStatus {
             403 -> NetworkStatus.NetworkErrorForbidden
         }
     }
-
     return NetworkStatus.NetworkErrorUnknown
 }
 
-data class NetworkState(
+data class NetworkState (
     var errorMessage : String,
     var isLoading : Boolean
 )

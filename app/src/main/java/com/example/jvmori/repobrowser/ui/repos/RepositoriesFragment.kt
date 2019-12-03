@@ -45,7 +45,6 @@ class RepositoriesFragment :
         setHasOptionsMenu(true)
         viewModel = ViewModelProviders.of(this, factory)[RepositoriesViewModel::class.java]
         viewModel.fetchRepos()
-        viewModel.observeNetworkStatus()
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -72,7 +71,11 @@ class RepositoriesFragment :
 
     override fun onStart() {
         super.onStart()
-        initRecyclerView(null)
+        initRecyclerView()
+        viewModel.observeNetworkStatus(reposAdapter)
+        viewModel.networkState.observe(this, Observer {
+            reposAdapter.networkState = it
+        })
         viewModel.configurePublishSubject()
         viewModel.results.observe(this, Observer {
             when (it.status) {
@@ -83,9 +86,9 @@ class RepositoriesFragment :
         })
     }
 
-    private fun initRecyclerView(networkState: NetworkState?) {
+    private fun initRecyclerView() {
         binding.loading.visibility = View.GONE
-        reposAdapter = ReposAdapter(networkState)
+        reposAdapter = ReposAdapter()
         binding.reposRv.apply {
             adapter = reposAdapter
         }

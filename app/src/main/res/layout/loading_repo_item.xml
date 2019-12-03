@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <data>
+    <data class = "LoadingItem">
+        <import type="android.view.View"/>
         <variable
                 name="networkStatus"
                 type="com.example.jvmori.repobrowser.utils.NetworkState" />
@@ -10,7 +11,23 @@
     <androidx.constraintlayout.widget.ConstraintLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="60dp">
+        <ProgressBar
+                android:visibility="@{networkStatus.loading ? View.VISIBLE : View.GONE, default=gone}"
+                android:layout_width="0dp"
+                android:layout_height="0dp" app:layout_constraintTop_toTopOf="parent"
+                android:layout_marginTop="8dp" app:layout_constraintBottom_toBottomOf="parent"
+                android:layout_marginBottom="8dp" app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" android:id="@+id/progressBar"/>
+        <TextView
+                android:text="@{networkStatus.errorMessage}"
+                android:layout_width="0dp"
+                android:layout_height="0dp" android:id="@+id/textView"
+                app:layout_constraintEnd_toEndOf="@+id/progressBar"
+                app:layout_constraintStart_toStartOf="@+id/progressBar" android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp" app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent" android:textAlignment="center"/>
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
