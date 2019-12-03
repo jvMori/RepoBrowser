@@ -18,3 +18,8 @@ fun handleNetworkError(status : Throwable?) : NetworkStatus {
 
     return NetworkStatus.NetworkErrorUnknown
 }
+
+data class NetworkState(
+    var errorMessage : String,
+    var isLoading : Boolean
+)

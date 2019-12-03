@@ -15,6 +15,7 @@ import com.example.jvmori.repobrowser.R
 import com.example.jvmori.repobrowser.data.base.local.RepoEntity
 import com.example.jvmori.repobrowser.data.base.network.Resource
 import com.example.jvmori.repobrowser.databinding.FragmentRepositoriesBinding
+import com.example.jvmori.repobrowser.utils.NetworkState
 import dagger.android.support.DaggerFragment
 import javax.inject.Inject
 
@@ -71,7 +72,7 @@ class RepositoriesFragment :
 
     override fun onStart() {
         super.onStart()
-        initRecyclerView()
+        initRecyclerView(null)
         viewModel.configurePublishSubject()
         viewModel.results.observe(this, Observer {
             when (it.status) {
@@ -82,9 +83,9 @@ class RepositoriesFragment :
         })
     }
 
-    private fun initRecyclerView() {
+    private fun initRecyclerView(networkState: NetworkState?) {
         binding.loading.visibility = View.GONE
-        reposAdapter = ReposAdapter()
+        reposAdapter = ReposAdapter(networkState)
         binding.reposRv.apply {
             adapter = reposAdapter
         }
