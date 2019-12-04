@@ -67,12 +67,12 @@ class RepositoriesFragment :
         super.onStart()
         initRecyclerView()
         viewModel.observeNetworkStatus()
-        viewModel.networkState.observe(this, Observer {
+        viewModel.networkState.observe(viewLifecycleOwner, Observer {
             if (it.errorMessage.isNotEmpty())
                 Toast.makeText(this.requireContext(), it.errorMessage, Toast.LENGTH_SHORT).show()
         })
         viewModel.configurePublishSubject()
-        viewModel.results.observe(this, Observer {
+        viewModel.results.observe(viewLifecycleOwner, Observer {
             when (it.status) {
                 Resource.Status.SUCCESS -> success(it.data)
                 Resource.Status.ERROR -> error(it.message)
