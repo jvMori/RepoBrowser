@@ -19,6 +19,7 @@ fun handleNetworkError(status : Throwable?) : NetworkStatus {
 }
 
 data class NetworkState (
+    var isError : Boolean,
     var errorMessage : String,
     var isLoading : Boolean
 )

@@ -19,7 +19,7 @@ class ReposAdapter: PagedListAdapter<RepoEntity, RecyclerView.ViewHolder>(ReposD
         const val LOADING = 1
     }
 
-    var networkState = NetworkState("", false)
+    var networkState = NetworkState(false,"", false)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         when (viewType) {

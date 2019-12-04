@@ -15,19 +15,11 @@ import com.example.jvmori.repobrowser.R
 import com.example.jvmori.repobrowser.data.base.local.RepoEntity
 import com.example.jvmori.repobrowser.data.base.network.Resource
 import com.example.jvmori.repobrowser.databinding.FragmentRepositoriesBinding
+import com.example.jvmori.repobrowser.databinding.LoadingBinding
 import com.example.jvmori.repobrowser.utils.NetworkState
 import dagger.android.support.DaggerFragment
 import javax.inject.Inject
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- *
- */
 class RepositoriesFragment :
     DaggerFragment(),
     SearchView.OnQueryTextListener,
@@ -72,16 +64,16 @@ class RepositoriesFragment :
     override fun onStart() {
         super.onStart()
         initRecyclerView()
-        viewModel.observeNetworkStatus(reposAdapter)
+        viewModel.observeNetworkStatus()
         viewModel.networkState.observe(this, Observer {
             binding.networkStatus = it
-//            if (it.errorMessage.isNotEmpty())
-//                Toast.makeText(this.requireContext(), it.errorMessage, Toast.LENGTH_SHORT).show()
+            binding.networkStatus = it
+            if (it.errorMessage.isNotEmpty())
+                Toast.makeText(this.requireContext(), it.errorMessage, Toast.LENGTH_SHORT).show()
         })
         viewModel.configurePublishSubject()
         viewModel.results.observe(this, Observer {
             when (it.status) {
-                Resource.Status.LOADING -> loading()
                 Resource.Status.SUCCESS -> success(it.data)
                 Resource.Status.ERROR -> error(it.message)
             }
@@ -89,25 +81,17 @@ class RepositoriesFragment :
     }
 
     private fun initRecyclerView() {
-        binding.loading.visibility = View.GONE
         reposAdapter = ReposAdapter()
         binding.reposRv.apply {
             adapter = reposAdapter
         }
     }
 
-    private fun loading() {
-        binding.loading.visibility = View.VISIBLE
-    }
-
     private fun success(data: PagedList<RepoEntity>?) {
-        if (data != null && data.isNotEmpty())
-            binding.loading.visibility = View.GONE
         reposAdapter.submitList(data)
     }
 
     private fun error(errorMessage: String?) {
-        binding.loading.visibility = View.GONE
         Toast.makeText(this.requireContext(), errorMessage, Toast.LENGTH_LONG).show()
     }
 

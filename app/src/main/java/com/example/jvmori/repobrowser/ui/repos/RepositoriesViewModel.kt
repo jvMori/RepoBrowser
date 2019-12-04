@@ -1,6 +1,5 @@
 package com.example.jvmori.repobrowser.ui.repos
 
-import android.provider.Settings.Global.getString
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -58,6 +57,10 @@ class RepositoriesViewModel @Inject constructor(
         )
     }
 
+    fun replay(){
+        Log.i(TAG, "Cliecked")
+    }
+
     fun configurePublishSubject() {
         disposable.add(
             publishSubject
@@ -79,20 +82,21 @@ class RepositoriesViewModel @Inject constructor(
         )
     }
 
-     fun observeNetworkStatus(reposAdapter: ReposAdapter) {
+     fun observeNetworkStatus() {
         disposable.add(
             networkStatus
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnNext {
                     when (it){
                         is NetworkStatus.NetworkLoading -> {
-                            _networkState.value = NetworkState("", true)
+                            _networkState.value = NetworkState(false, "", true)
                         }
                         is NetworkStatus.NetworkSuccess -> {
-                            _networkState.value = NetworkState("", false)
+                            _networkState.value = NetworkState(false, "", false)
                         }
                         is NetworkStatus.NetworkErrorForbidden -> {
                             _networkState.value = NetworkState(
+                                true,
                                 context.resources.getString(R.string.error_forbidden),
                                 false
                             )
@@ -100,6 +104,7 @@ class RepositoriesViewModel @Inject constructor(
                         is NetworkStatus.NetworkErrorUnknown ->
                         {
                             _networkState.value = NetworkState(
+                                true,
                                 context.resources.getString(R.string.error_network_unknown),
                                 false
                             )
