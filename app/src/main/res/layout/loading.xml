@@ -7,7 +7,7 @@
         <import type="android.view.View"/>
         <variable
                 name="networkStatus"
-                type="com.example.jvmori.repobrowser.utils.NetworkState" />
+                type="androidx.lifecycle.LiveData&lt;com.example.jvmori.repobrowser.utils.NetworkState&gt;" />
         <variable
                 name="viewmodel"
                 type="com.example.jvmori.repobrowser.ui.repos.RepositoriesViewModel" />
@@ -22,7 +22,7 @@
         <ImageView
                 android:id="@+id/replayBtn"
                 android:layout_width="0dp"
-                android:layout_height="60dp"
+                android:layout_height="40dp"
                 android:layout_marginTop="8dp"
                 android:clickable="true"
                 android:onClick="@{() -> viewmodel.replay()}"

@@ -58,6 +58,8 @@ class RepositoriesFragment :
         // Inflate the layout for this fragment
         binding =
             DataBindingUtil.inflate(inflater, R.layout.fragment_repositories, container, false)
+        binding.lifecycleOwner = this
+        binding.networkStatus = viewModel.networkState
         return binding.root
     }
 
@@ -66,8 +68,6 @@ class RepositoriesFragment :
         initRecyclerView()
         viewModel.observeNetworkStatus()
         viewModel.networkState.observe(this, Observer {
-            binding.networkStatus = it
-            binding.networkStatus = it
             if (it.errorMessage.isNotEmpty())
                 Toast.makeText(this.requireContext(), it.errorMessage, Toast.LENGTH_SHORT).show()
         })

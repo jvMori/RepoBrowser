@@ -8,7 +8,7 @@
         <import type="android.view.View"/>
         <variable
                 name="networkStatus"
-                type="com.example.jvmori.repobrowser.utils.NetworkState" />
+                type="androidx.lifecycle.LiveData&lt;com.example.jvmori.repobrowser.utils.NetworkState&gt;" />
 
         <variable name="viewmodel"
                   type="com.example.jvmori.repobrowser.ui.repos.RepositoriesViewModel"/>
