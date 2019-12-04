@@ -1,6 +1,7 @@
 package com.example.jvmori.repobrowser.ui
 
 import android.os.Bundle
+import android.os.PersistableBundle
 import androidx.navigation.Navigation
 import androidx.navigation.ui.NavigationUI
 import com.example.jvmori.repobrowser.R
@@ -19,4 +20,5 @@ class MainActivity : DaggerAppCompatActivity() {
         val controller = Navigation.findNavController(this, R.id.navHostFragment)
         NavigationUI.setupActionBarWithNavController(this, controller)
     }
+
 }

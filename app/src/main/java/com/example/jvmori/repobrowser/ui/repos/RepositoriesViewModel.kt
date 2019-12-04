@@ -24,8 +24,7 @@ import javax.inject.Inject
 
 
 class RepositoriesViewModel @Inject constructor(
-    private val repository: ReposRepository,
-    private val context : MainActivity
+    private val repository: ReposRepository
 ) : ViewModel() {
 
     private val _results = MutableLiveData<Resource<PagedList<RepoEntity>>>()
@@ -98,7 +97,7 @@ class RepositoriesViewModel @Inject constructor(
                         is NetworkStatus.NetworkErrorForbidden -> {
                             _networkState.value = NetworkState(
                                 true,
-                                context.resources.getString(R.string.error_forbidden),
+                                "Too many requests. Wait a while and try again!",
                                 false
                             )
                         }
@@ -106,7 +105,7 @@ class RepositoriesViewModel @Inject constructor(
                         {
                             _networkState.value = NetworkState(
                                 true,
-                                context.resources.getString(R.string.error_network_unknown),
+                                "Could not fetch data due to network error.",
                                 false
                             )
                         }

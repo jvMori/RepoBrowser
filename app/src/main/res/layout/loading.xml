@@ -31,7 +31,8 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/ic_replay" />
+                app:srcCompat="@drawable/ic_replay"
+                android:focusable="true" />
 
         <ProgressBar
                 android:id="@+id/progressBar2"
