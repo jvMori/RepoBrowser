@@ -6,7 +6,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.paging.PagedList
 import com.example.jvmori.repobrowser.data.base.local.RepoEntity
-import com.example.jvmori.repobrowser.data.base.network.Resource
 import com.example.jvmori.repobrowser.data.repos.ReposRepository
 import com.example.jvmori.repobrowser.utils.NetworkState
 import com.example.jvmori.repobrowser.utils.NetworkStatus
@@ -36,7 +35,7 @@ class RepositoriesViewModel @Inject constructor(
     @Inject
     lateinit var disposable: CompositeDisposable
     @Inject
-    lateinit var networkStatus: PublishSubject<NetworkStatus>
+    lateinit var networkStatusSource: PublishSubject<NetworkStatus>
 
     fun observeRepositoriesSource() {
         source
@@ -79,7 +78,7 @@ class RepositoriesViewModel @Inject constructor(
 
     fun observeNetworkStatus() {
         disposable.add(
-            networkStatus
+            networkStatusSource
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnNext {
                     when (it) {
@@ -109,6 +108,6 @@ class RepositoriesViewModel @Inject constructor(
     override fun onCleared() {
         super.onCleared()
         disposable.clear()
-        networkStatus.onComplete()
+        networkStatusSource.onComplete()
     }
 }
