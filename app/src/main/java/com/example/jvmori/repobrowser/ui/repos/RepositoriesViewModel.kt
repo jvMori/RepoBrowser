@@ -3,20 +3,18 @@ package com.example.jvmori.repobrowser.ui.repos
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
 import androidx.paging.PagedList
-import com.example.jvmori.repobrowser.R
 import com.example.jvmori.repobrowser.data.base.local.RepoEntity
 import com.example.jvmori.repobrowser.data.base.network.Resource
-import com.example.jvmori.repobrowser.data.repos.RepoResult
 import com.example.jvmori.repobrowser.data.repos.ReposRepository
-import com.example.jvmori.repobrowser.ui.MainActivity
 import com.example.jvmori.repobrowser.utils.NetworkState
 import com.example.jvmori.repobrowser.utils.NetworkStatus
 import com.example.jvmori.repobrowser.utils.TAG
+import io.reactivex.Observer
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.PublishSubject
 import java.util.concurrent.TimeUnit
@@ -27,62 +25,58 @@ class RepositoriesViewModel @Inject constructor(
     private val repository: ReposRepository
 ) : ViewModel() {
 
-    private val _results = MutableLiveData<Resource<PagedList<RepoEntity>>>()
-    val results: LiveData<Resource<PagedList<RepoEntity>>> = _results
+    private val _repositories = MutableLiveData<Resource<PagedList<RepoEntity>>>()
+    val repositories: LiveData<Resource<PagedList<RepoEntity>>> = _repositories
 
     private val _networkState = MutableLiveData<NetworkState>()
     val networkState : LiveData<NetworkState> = _networkState
 
-    private val publishSubject = PublishSubject.create<String>()
-    private val disposable = CompositeDisposable()
-    private val tetrisDisposable = CompositeDisposable()
+    private val source = PublishSubject.create<String>()
 
     @Inject
-    lateinit var networkDisposable: CompositeDisposable
+    lateinit var disposable: CompositeDisposable
     @Inject
     lateinit var networkStatus : PublishSubject<NetworkStatus>
-    private lateinit var repoResult: RepoResult
 
-    fun fetchRepos(query: String = "tetris") {
-        repoResult = repository.fetchRepos(query)
-        _results.value = Resource.loading(null)
-        tetrisDisposable.add(
-            repoResult.data?.subscribe(
-                {
-                    _results.value = Resource.success(it)
-                }, {
-                    _results.value = Resource.error(it.message ?: "", null)
-                }
-            )!!
-        )
+    fun observeRepositoriesSource() {
+        source
+            .debounce(300, TimeUnit.MILLISECONDS)
+            .distinctUntilChanged()
+            .filter { query -> query.isNotEmpty() }
+            .switchMap {
+                repository.fetchRepos(it).data
+            }
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(getObserver())
+    }
+
+    private fun getObserver() : Observer<PagedList<RepoEntity>>{
+        return object : Observer<PagedList<RepoEntity>>{
+            override fun onComplete() {
+            }
+
+            override fun onSubscribe(d: Disposable) {
+                disposable.add(d)
+               _repositories.value = Resource.loading(null)
+            }
+
+            override fun onNext(t: PagedList<RepoEntity>) {
+                _networkState.value = NetworkState(false, "", false)
+                _repositories.value = Resource.success(t)
+            }
+
+            override fun onError(e: Throwable) {
+                _repositories.value = Resource.error(e.message ?: "", null)
+            }
+        }
     }
 
     fun replay(){
         Log.i(TAG, "Cliecked")
     }
 
-    fun configurePublishSubject() {
-        disposable.add(
-            publishSubject
-                .debounce(300, TimeUnit.MILLISECONDS)
-                .distinctUntilChanged()
-                .filter { query -> query.isNotEmpty() }
-                .switchMap {
-                    tetrisDisposable.clear()
-                    repoResult = repository.fetchRepos(it)
-                    repoResult.data
-                }
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({ result ->
-                    _results.value = Resource.success(result)
-                }, {
-                    _results.value = Resource.error(it.message ?: "", null)
-                })
-        )
-    }
-
-     fun observeNetworkStatus() {
+    fun observeNetworkStatus() {
         disposable.add(
             networkStatus
                 .observeOn(AndroidSchedulers.mainThread())
@@ -93,13 +87,6 @@ class RepositoriesViewModel @Inject constructor(
                         }
                         is NetworkStatus.NetworkSuccess -> {
                             _networkState.value = NetworkState(false, "", false)
-                        }
-                        is NetworkStatus.NetworkErrorForbidden -> {
-                            _networkState.value = NetworkState(
-                                true,
-                                "Too many requests. Wait a while and try again!",
-                                false
-                            )
                         }
                         is NetworkStatus.NetworkErrorUnknown ->
                         {
@@ -115,15 +102,14 @@ class RepositoriesViewModel @Inject constructor(
         )
     }
 
-    fun onQueryTextChange(query: String?) {
+    fun requestQuery(query: String?) {
         if (query != null && query.isNotEmpty()) {
-            publishSubject.onNext(query)
+            source.onNext(query)
         }
     }
 
     override fun onCleared() {
         super.onCleared()
-        networkDisposable.clear()
         disposable.clear()
         networkStatus.onComplete()
     }
