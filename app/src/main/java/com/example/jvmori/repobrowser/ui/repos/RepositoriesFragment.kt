@@ -75,10 +75,7 @@ class RepositoriesFragment :
 
     private fun displayRepositories() {
         viewModel.repositories.observe(viewLifecycleOwner, Observer {
-            when (it.status) {
-                Resource.Status.SUCCESS -> success(it.data)
-                Resource.Status.ERROR -> error(it.message)
-            }
+            reposAdapter.submitList(it)
         })
     }
 
@@ -94,14 +91,6 @@ class RepositoriesFragment :
         binding.reposRv.apply {
             adapter = reposAdapter
         }
-    }
-
-    private fun success(data: PagedList<RepoEntity>?) {
-        reposAdapter.submitList(data)
-    }
-
-    private fun error(errorMessage: String?) {
-        Toast.makeText(this.requireContext(), errorMessage, Toast.LENGTH_LONG).show()
     }
 
     override fun onQueryTextSubmit(query: String?): Boolean {

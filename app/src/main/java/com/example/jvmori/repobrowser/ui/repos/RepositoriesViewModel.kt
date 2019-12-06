@@ -25,18 +25,18 @@ class RepositoriesViewModel @Inject constructor(
     private val repository: ReposRepository
 ) : ViewModel() {
 
-    private val _repositories = MutableLiveData<Resource<PagedList<RepoEntity>>>()
-    val repositories: LiveData<Resource<PagedList<RepoEntity>>> = _repositories
+    private val _repositories = MutableLiveData<PagedList<RepoEntity>>()
+    val repositories: LiveData<PagedList<RepoEntity>> = _repositories
 
     private val _networkState = MutableLiveData<NetworkState>()
-    val networkState : LiveData<NetworkState> = _networkState
+    val networkState: LiveData<NetworkState> = _networkState
 
     private val source = PublishSubject.create<String>()
 
     @Inject
     lateinit var disposable: CompositeDisposable
     @Inject
-    lateinit var networkStatus : PublishSubject<NetworkStatus>
+    lateinit var networkStatus: PublishSubject<NetworkStatus>
 
     fun observeRepositoriesSource() {
         source
@@ -51,28 +51,29 @@ class RepositoriesViewModel @Inject constructor(
             .subscribe(getObserver())
     }
 
-    private fun getObserver() : Observer<PagedList<RepoEntity>>{
-        return object : Observer<PagedList<RepoEntity>>{
+    private fun getObserver(): Observer<PagedList<RepoEntity>> {
+        return object : Observer<PagedList<RepoEntity>> {
             override fun onComplete() {
             }
 
             override fun onSubscribe(d: Disposable) {
                 disposable.add(d)
-               _repositories.value = Resource.loading(null)
+                _networkState.value = NetworkState(false, "", true)
             }
 
             override fun onNext(t: PagedList<RepoEntity>) {
                 _networkState.value = NetworkState(false, "", false)
-                _repositories.value = Resource.success(t)
+                _repositories.value = t
             }
 
             override fun onError(e: Throwable) {
-                _repositories.value = Resource.error(e.message ?: "", null)
+                _networkState.value =
+                    NetworkState(true, e.message ?: "Network error occurred. Try again!", true)
             }
         }
     }
 
-    fun replay(){
+    fun replay() {
         Log.i(TAG, "Cliecked")
     }
 
@@ -81,19 +82,16 @@ class RepositoriesViewModel @Inject constructor(
             networkStatus
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnNext {
-                    when (it){
+                    when (it) {
                         is NetworkStatus.NetworkLoading -> {
                             _networkState.value = NetworkState(false, "", true)
                         }
                         is NetworkStatus.NetworkSuccess -> {
                             _networkState.value = NetworkState(false, "", false)
                         }
-                        is NetworkStatus.NetworkErrorUnknown ->
-                        {
+                        is NetworkStatus.NetworkErrorUnknown -> {
                             _networkState.value = NetworkState(
-                                true,
-                                "Could not fetch data due to network error.",
-                                false
+                                true, "Could not fetch data due to network error.", false
                             )
                         }
                     }
